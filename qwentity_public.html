@@ -1,0 +1,858 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Qwentity</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700&family=Manrope:wght@400;500;600&family=JetBrains+Mono&display=swap">
+<style>
+:root{
+  --bg:#0b1014; --panel:#121a20; --line:#20303a; --fg:#e4eef2; --muted:#7f97a3;
+  --core:#4fd6e8; --core-dim:#1d5560; --user:#1a2832; --warn:#f0b35a; --rec:#ff5a6a;
+  --f-display:"Unbounded","Trebuchet MS",sans-serif;
+  --f-body:"Manrope",system-ui,-apple-system,sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{height:100%;margin:0}
+body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:16px;line-height:1.5}
+.app{height:100%;display:flex;flex-direction:column;max-width:780px;margin:0 auto;padding:12px 16px}
+header{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding-bottom:12px;border-bottom:1px solid var(--line)}
+h1{font-family:var(--f-display);font-size:20px;letter-spacing:.05em;margin:0;flex:1}
+.status{font-family:var(--f-mono);font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.btn{background:none;border:1px solid var(--line);color:var(--muted);border-radius:8px;padding:7px 10px;font:inherit;font-size:13px;cursor:pointer}
+.btn[aria-pressed="true"]{color:var(--core);border-color:var(--core-dim)}
+button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:2px solid var(--core);outline-offset:2px}
+
+#settings{display:grid;gap:10px;padding:12px 0;border-bottom:1px solid var(--line)}
+#settings label{font-family:var(--f-mono);font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;display:grid;gap:4px}
+#settings input,#settings textarea,#settings select{width:100%;background:var(--panel);color:var(--fg);border:1px solid var(--line);border-radius:8px;padding:9px;font:inherit;font-size:15px;text-transform:none;letter-spacing:0}
+#settings textarea{min-height:70px;resize:vertical}
+#settings a{color:var(--core)}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media (max-width:520px){.row{grid-template-columns:1fr}}
+
+#log{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:14px;padding:16px 0}
+.msg{max-width:88%;white-space:pre-wrap;overflow-wrap:anywhere}
+.msg .who{display:block;font-family:var(--f-mono);font-size:11px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase}
+.msg.j{align-self:flex-start;padding-left:14px;border-left:2px solid var(--core-dim)}
+.msg.u{align-self:flex-end;background:var(--user);border-radius:14px 14px 4px 14px;padding:10px 14px}
+.msg.err{color:var(--warn)}
+.src{display:block;margin-top:6px;font-size:13px;color:var(--muted)}
+.src a{color:var(--core)}
+
+.mic-zone{display:flex;flex-direction:column;align-items:center;gap:8px;padding:14px 0 6px;border-top:1px solid var(--line)}
+#mic{width:96px;height:96px;border-radius:50%;border:0;cursor:pointer;position:relative;
+  background:radial-gradient(circle,var(--core) 0 22%,var(--core-dim) 23% 46%,var(--panel) 47%);
+  box-shadow:0 0 0 2px var(--core-dim)}
+#mic.listening{background:radial-gradient(circle,var(--rec) 0 22%,#5a1d25 23% 46%,var(--panel) 47%);box-shadow:0 0 0 2px var(--rec)}
+#mic.busy::after,#mic.listening::after{content:"";position:absolute;inset:-8px;border-radius:50%;border:2px solid currentColor;animation:p 1.2s ease-in-out infinite}
+#mic.busy{color:var(--core)} #mic.listening{color:var(--rec)}
+@keyframes p{0%,100%{transform:scale(1);opacity:.3}50%{transform:scale(1.1);opacity:.9}}
+@media (prefers-reduced-motion:reduce){#mic::after{animation:none!important}}
+#interim{min-height:1.5em;color:var(--muted);font-size:15px;text-align:center}
+.text-row{display:flex;gap:8px;width:100%}
+#q{flex:1;min-width:0;background:var(--panel);color:var(--fg);border:1px solid var(--line);border-radius:10px;padding:10px 12px;font:inherit}
+#send{background:var(--core);color:var(--bg);border:0;border-radius:10px;padding:10px 14px;font-family:var(--f-display);font-size:13px;cursor:pointer}
+
+.mic-langs{display:flex;gap:4px}
+.mic-langs button{background:none;border:1px solid var(--line);color:var(--muted);border-radius:6px;padding:3px 8px;font-family:var(--f-mono);font-size:11px;cursor:pointer}
+.mic-langs button[aria-pressed="true"]{color:var(--bg);background:var(--core);border-color:var(--core)}
+/* что сейчас работает */
+.trace{display:flex;flex-wrap:wrap;gap:4px 10px;margin-top:6px;font-family:var(--f-mono);font-size:11px;color:var(--muted)}
+.trace .run{color:var(--core)} .trace .ok{color:#6fd39a} .trace .err{color:var(--warn)}
+.health{display:flex;gap:10px;font-family:var(--f-mono);font-size:11px;color:var(--muted)}
+.health span::before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px;background:var(--line);vertical-align:0}
+.health .ok::before{background:#6fd39a} .health .err::before{background:var(--warn)} .health .run::before{background:var(--core)}
+/* список чатов */
+#drawer{position:fixed;top:0;left:0;bottom:0;width:min(300px,86vw);background:var(--panel);border-right:1px solid var(--line);z-index:20;display:flex;flex-direction:column;box-shadow:12px 0 32px rgba(0,0,0,.35)}
+.drawer-head{display:flex;align-items:center;gap:8px;padding:12px;border-bottom:1px solid var(--line)}
+.drawer-head strong{flex:1;font-family:var(--f-display);font-size:14px;letter-spacing:.04em}
+#newChat2{width:calc(100% - 24px);margin:12px;background:var(--core);color:var(--bg);border:0;border-radius:10px;padding:10px;font-family:var(--f-display);font-size:13px;cursor:pointer}
+#chatList{flex:1;overflow-y:auto;padding:0 8px 12px;display:flex;flex-direction:column;gap:2px}
+.chat-item{display:flex;align-items:center;gap:6px;border-radius:8px}
+.chat-item button.open{flex:1;min-width:0;background:none;border:0;color:var(--fg);text-align:left;padding:9px 10px;border-radius:8px;font:inherit;font-size:14px;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chat-item button.open .when{display:block;font-size:11px;color:var(--muted);font-family:var(--f-mono)}
+.chat-item:hover,.chat-item.active{background:var(--user)}
+.chat-item button.del{background:none;border:0;color:var(--muted);cursor:pointer;padding:6px 8px;border-radius:6px;font-size:14px}
+.chat-item button.del:hover{color:var(--warn)}
+#scrim{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:15}
+/* картинки */
+.img-card{display:block;margin:8px 0;padding:0;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--panel);cursor:pointer;max-width:340px;width:100%}
+.img-card img{display:block;width:100%;height:auto;min-height:120px;background:var(--bg)}
+.img-card .again{background:none;border:1px solid var(--line);color:var(--muted);border-radius:8px;padding:5px 8px;font:inherit;font-size:12px;cursor:pointer;flex:none}
+.img-card .cap{display:flex;gap:8px;align-items:center;padding:8px 10px;font-size:12px;color:var(--muted)}
+.img-card .cap span{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:left}
+.img-view{height:100%;display:flex;align-items:center;justify-content:center;padding:16px}
+.img-view img{max-width:100%;max-height:100%;border-radius:10px}
+.photos{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px;margin:8px 0;max-width:560px}
+.photos button{padding:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--panel);cursor:pointer;display:flex;flex-direction:column}
+.photos img{width:100%;aspect-ratio:1/1;object-fit:cover;display:block;background:var(--bg)}
+.photos .ps{font-size:11px;color:var(--muted);padding:4px 6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:left}
+.photo-note{display:block;font-size:13px;color:var(--muted);margin:4px 0}
+.photo-note a{color:var(--core)}
+/* окно с кодом, как у Claude */
+.code-chip{display:flex;align-items:center;gap:10px;margin:8px 0;padding:10px 12px;background:var(--panel);border:1px solid var(--line);border-radius:10px;color:var(--fg);font:inherit;font-size:14px;cursor:pointer;text-align:left;width:100%;max-width:420px}
+.code-chip:hover{border-color:var(--core-dim)}
+.code-chip .ic{font-family:var(--f-mono);color:var(--core);border:1px solid var(--core-dim);border-radius:6px;padding:2px 6px;font-size:12px}
+.code-chip .meta{color:var(--muted);font-size:12px;display:block}
+.code-chip .nm{flex:1;min-width:0}
+.code-chip .dl{margin-left:auto;background:var(--core);color:var(--bg);border:0;border-radius:8px;padding:6px 10px;font:inherit;font-size:12px;cursor:pointer;flex:none}
+.file-view{height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:24px;text-align:center}
+.file-view .big{font-family:var(--f-mono);font-size:28px;color:var(--core);border:2px solid var(--core-dim);border-radius:14px;padding:18px 22px}
+.file-view .fname{font-family:var(--f-mono);font-size:16px}
+.file-view .fmeta{color:var(--muted);font-size:13px}
+.file-view .run{font-family:var(--f-mono);font-size:13px;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:8px 12px;color:var(--fg);max-width:100%;overflow-wrap:anywhere}
+.file-view .dl2{background:var(--core);color:var(--bg);border:0;border-radius:10px;padding:10px 18px;font-family:var(--f-display);font-size:13px;cursor:pointer}
+#pane{position:fixed;top:0;right:0;bottom:0;width:min(58vw,900px);background:var(--panel);border-left:1px solid var(--line);display:flex;flex-direction:column;z-index:10;box-shadow:-12px 0 32px rgba(0,0,0,.35)}
+@media (max-width:820px){#pane{width:100vw}}
+body.pane-open .app{margin-right:min(58vw,900px);margin-left:max(0px,calc((100vw - min(58vw,900px) - 780px)/2))}
+@media (max-width:820px){body.pane-open .app{margin:0 auto}}
+.pane-head{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:10px 12px;border-bottom:1px solid var(--line)}
+.pane-title{flex:1;min-width:0;font-family:var(--f-mono);font-size:13px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tabs{display:flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.tabs button{background:none;border:0;color:var(--muted);padding:6px 12px;font:inherit;font-size:13px;cursor:pointer}
+.tabs button[aria-selected="true"]{background:var(--core-dim);color:var(--fg)}
+.pane-body{flex:1;min-height:0;overflow:auto}
+#errBar{display:flex;align-items:center;gap:10px;padding:8px 12px;background:#3a2414;color:var(--warn);font-size:13px;border-bottom:1px solid var(--line)}
+#errText{flex:1;min-width:0;font-family:var(--f-mono);overflow-wrap:anywhere}
+#fixBtn{color:var(--warn);border-color:var(--warn);flex:none}
+.pane-body pre{margin:0;padding:14px 16px;font-family:var(--f-mono);font-size:13px;line-height:1.55;white-space:pre;tab-size:2}
+.pane-body pre code.hljs{background:transparent;padding:0}
+#preview{width:100%;height:100%;border:0;background:#fff;display:block}
+</style>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+</head>
+<body>
+<div class="app">
+  <header>
+    <button class="btn" id="chatsBtn" aria-expanded="false"></button>
+    <h1 id="title">QWENTITY</h1>
+    <button class="btn" id="newChat"></button>
+    <span class="status" id="status"></span>
+    <span class="health"><span id="hGem" title="Gemini">AI</span><span id="hImg" title="Images">IMG</span></span>
+    <button class="btn" id="wake" aria-pressed="false"></button>
+    <button class="btn" id="voice" aria-pressed="true"></button>
+    <button class="btn" id="setBtn" aria-expanded="false"></button>
+  </header>
+
+  <section id="settings" hidden>
+    <label for="key"><span><span data-t="keyLabel"></span> <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">aistudio.google.com/apikey</a></span>
+      <input id="key" type="password" autocomplete="off" placeholder="AIza… / AQ.…">
+    </label>
+    <div class="row">
+      <label for="lang"><span data-t="langLabel"></span>
+        <select id="lang">
+          <option value="ru-RU">Русский</option>
+          <option value="fr-FR">Français</option>
+          <option value="en-US">English</option>
+          <option value="it-IT">Italiano</option>
+          <option value="de-DE">Deutsch</option>
+        </select>
+      </label>
+      <label for="model"><span data-t="modelLabel"></span>
+        <select id="model"><option value="gemini-flash-latest">gemini-flash-latest</option></select>
+      </label>
+    </div>
+    <label for="about"><span data-t="aboutLabel"></span>
+      <textarea id="about"></textarea>
+    </label>
+  </section>
+
+  <main id="log" aria-live="polite">
+  </main>
+
+  <div class="mic-zone">
+    <button id="mic"></button>
+    <div class="mic-langs" role="group" aria-label="Speech language">
+      <button type="button" data-l="en-US">EN</button><button type="button" data-l="ru-RU">RU</button><button type="button" data-l="fr-FR">FR</button><button type="button" data-l="de-DE">DE</button><button type="button" data-l="it-IT">IT</button>
+    </div>
+    <div id="interim"></div>
+    <form class="text-row" id="form">
+      <input id="q">
+      <button id="send" type="submit"></button>
+    </form>
+  </div>
+</div>
+
+<div id="scrim" hidden></div>
+<nav id="drawer" hidden>
+  <div class="drawer-head"><strong id="chatsTitle"></strong><button class="btn" id="drawerClose" aria-label="Close">✕</button></div>
+  <button id="newChat2" type="button"></button>
+  <div id="chatList"></div>
+</nav>
+
+<aside id="pane" hidden aria-label="Code">
+  <div class="pane-head">
+    <span class="pane-title" id="paneTitle"></span>
+    <div class="tabs" role="tablist">
+      <button id="tabPrev" role="tab" aria-selected="true"></button>
+      <button id="tabCode" role="tab" aria-selected="false"></button>
+    </div>
+    <button class="btn" id="copyBtn"></button>
+    <button class="btn" id="dlBtn"></button>
+    <button class="btn" id="closeBtn" aria-label="Close">✕</button>
+  </div>
+  <div id="errBar" hidden><span id="errText"></span><button class="btn" id="fixBtn" type="button"></button></div>
+  <div class="pane-body" id="codeView"><pre><code id="codeEl"></code></pre></div>
+  <div class="pane-body" id="prevView" hidden><iframe id="preview" sandbox="allow-scripts allow-modals allow-forms allow-popups allow-downloads" allow="microphone; autoplay; clipboard-write" title="Preview"></iframe></div>
+  <div class="pane-body" id="imgView" hidden><div class="img-view"><img id="imgBig" alt=""></div></div>
+  <div class="pane-body" id="fileView" hidden><div class="file-view">
+    <div class="big" id="fvIcon"></div>
+    <div class="fname" id="fvName"></div>
+    <div class="fmeta" id="fvMeta"></div>
+    <div class="run" id="fvRun"></div>
+    <button class="dl2" id="fvDl" type="button"></button>
+  </div></div>
+</aside>
+
+<script>
+const OWN_SRC=document.documentElement.outerHTML;
+const $ = id => document.getElementById(id);
+const S = { get:k=>{try{return localStorage.getItem(k)}catch(e){return null}}, set:(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}} };
+const log=$("log"), mic=$("mic"), interim=$("interim"), statusEl=$("status");
+const API="https://generativelanguage.googleapis.com/v1beta";
+// Ключ вшит в файл. НЕ пересылай этот файл другим людям — они смогут пользоваться твоим ключом.
+const DEFAULT_KEY="";   // для сайта ключ НЕ вшиваем: каждый вставляет свой в Settings
+
+// ---------- переводы интерфейса ----------
+const T={
+ ru:{again:"Другой вариант",photoSearching:"Ищу настоящие фото…",photoNone:"Свободных фото не нашёл — посмотри в Google Картинках.",moreGoogle:"Ещё фото в Google Картинках",photoSaid:"Вот настоящие фото.",improving:"Проверяю и улучшаю код…",improved:"✓ Код проверен и улучшен",errBar:"Ошибка в программе:",fix:"Исправить",fixPrompt:"В файле {f} при запуске ошибка: {e}. Найди причину и пришли полный исправленный файл.",chats:"Чаты",newChat:"+ Новый чат",untitled:"Новый чат",imgMaking:"Рисую картинку… (10–30 сек)",imgSaid:"Картинка готова.",imgFail:"Картинку не удалось нарисовать. Бесплатный сервис разрешает примерно одну картинку в 15 секунд — подожди и попроси ещё раз.",prompt:"Описание",codeTab:"Код",prevTab:"Файл",runPy:"Запуск: python ",runIno:"Открой в Arduino IDE и загрузи на плату",runOther:"Скачай файл и открой его в своей программе",bytes:"байт",copy:"Копировать",copied:"Скопировано",download:"Скачать",openCode:"Открыть код",lines:"строк",codeSaid:"Код открыт в окне справа.",name:"русском",title:"QWENTITY",ready:"готов",thinking:"думаю",speaking:"говорю",listening:"слушаю",waiting:"жду «Qwentity»",
+  wake:"«Qwentity»",on:"вкл",off:"выкл",voice:"Голос",settings:"Настройки",wakeTip:"Постоянно слушать слово «Qwentity»",
+  keyLabel:"Ключ Gemini API (бесплатно):",langLabel:"Язык (говоришь и получаешь ответ)",modelLabel:"Модель",aboutLabel:"Кто мы (Qwentity будет это учитывать)",
+  aboutPh:"Например: мы — мейкерспейс в Люксембурге, работаем с подростками 12–15 лет, есть лазерные резаки, 3D-принтеры, плоттер и подкаст-студия.",
+  jarvis:"Qwentity",you:"Ты",intro:"Нажми на круг и говори. Когда замолчишь — я отвечу голосом. Сначала вставь бесплатный ключ Gemini в «Настройки».",
+  mic:"Нажми и говори",qPh:"…или напиши вопрос",send:"Спросить",speak:"Говори…",think:"Думаю…",sources:"Источники:",yes:"Да?",
+  wakeHint:"Скажи «Qwentity» и вопрос",noSpeech:"Ничего не услышал. Нажми и скажи ещё раз.",denied:"Браузер не дал доступ к микрофону. Разреши микрофон (значок слева от адреса) и попробуй снова.",
+  micErr:"Ошибка микрофона: ",noSR:"Этот браузер не умеет распознавать речь. Открой файл в Google Chrome или Microsoft Edge.",
+  needKey:"Нужен ключ Gemini. Открой «Настройки» и вставь его.",badKey:"Ключ не подходит. Проверь его в «Настройках».",quota:"Бесплатный лимит на сейчас исчерпан. Подожди минуту и спроси снова.",offline:"Нет связи с интернетом.",empty:"Пустой ответ. Попробуй спросить иначе."},
+ fr:{again:"Autre version",photoSearching:"Je cherche de vraies photos…",photoNone:"Pas de photo libre trouvée — regarde dans Google Images.",moreGoogle:"Plus de photos sur Google Images",photoSaid:"Voici de vraies photos.",improving:"Je vérifie et j’améliore le code…",improved:"✓ Code vérifié et amélioré",errBar:"Erreur dans le programme :",fix:"Corriger",fixPrompt:"Dans le fichier {f}, il y a une erreur à l’exécution : {e}. Trouve la cause et envoie le fichier complet corrigé.",chats:"Discussions",newChat:"+ Nouvelle discussion",untitled:"Nouvelle discussion",imgMaking:"Je dessine… (10–30 s)",imgSaid:"L’image est prête.",imgFail:"Impossible de créer l’image. Le service gratuit permet environ une image toutes les 15 secondes — attends un peu et redemande.",prompt:"Description",codeTab:"Code",prevTab:"Fichier",runPy:"Lancer : python ",runIno:"Ouvre-le dans l’Arduino IDE et téléverse-le",runOther:"Télécharge le fichier et ouvre-le dans ton programme",bytes:"octets",copy:"Copier",copied:"Copié",download:"Télécharger",openCode:"Ouvrir le code",lines:"lignes",codeSaid:"Le code est ouvert dans la fenêtre à droite.",name:"français",title:"QWENTITY",ready:"prêt",thinking:"je réfléchis",speaking:"je parle",listening:"j’écoute",waiting:"j’attends « Qwentity »",
+  wake:"« Qwentity »",on:"oui",off:"non",voice:"Voix",settings:"Réglages",wakeTip:"Écouter en continu le mot « Qwentity »",
+  keyLabel:"Clé API Gemini (gratuite) :",langLabel:"Langue (parlée et des réponses)",modelLabel:"Modèle",aboutLabel:"Qui sommes-nous (Qwentity en tiendra compte)",
+  aboutPh:"Par exemple : nous sommes un makerspace au Luxembourg, nous travaillons avec des jeunes de 12 à 15 ans, nous avons des découpeuses laser, des imprimantes 3D, un traceur et un studio podcast.",
+  jarvis:"Qwentity",you:"Toi",intro:"Appuie sur le cercle et parle. Quand tu t’arrêtes, je réponds à voix haute. D’abord, colle ta clé Gemini gratuite dans « Réglages ».",
+  mic:"Appuie et parle",qPh:"…ou écris ta question",send:"Demander",speak:"Parle…",think:"Je réfléchis…",sources:"Sources :",yes:"Oui ?",
+  wakeHint:"Dis « Qwentity » puis ta question",noSpeech:"Je n’ai rien entendu. Appuie et parle encore.",denied:"Le navigateur bloque le micro. Autorise-le (icône à gauche de l’adresse) et réessaie.",
+  micErr:"Erreur de micro : ",noSR:"Ce navigateur ne reconnaît pas la parole. Ouvre le fichier dans Google Chrome ou Microsoft Edge.",
+  needKey:"Il faut une clé Gemini. Ouvre « Réglages » et colle-la.",badKey:"La clé ne fonctionne pas. Vérifie-la dans « Réglages ».",quota:"La limite gratuite est atteinte pour l’instant. Attends une minute et réessaie.",offline:"Pas de connexion internet.",empty:"Réponse vide. Essaie de reformuler."},
+ en:{again:"Another version",photoSearching:"Searching real photos…",photoNone:"No free photos found — have a look in Google Images.",moreGoogle:"More photos in Google Images",photoSaid:"Here are real photos.",improving:"Checking and improving the code…",improved:"✓ Code checked and improved",errBar:"Error in the program:",fix:"Fix it",fixPrompt:"The file {f} throws an error when it runs: {e}. Find the cause and send the full fixed file.",chats:"Chats",newChat:"+ New chat",untitled:"New chat",imgMaking:"Drawing… (10–30 s)",imgSaid:"The picture is ready.",imgFail:"Couldn’t draw the picture. The free service allows about one picture every 15 seconds — wait a moment and ask again.",prompt:"Prompt",codeTab:"Code",prevTab:"File",runPy:"Run: python ",runIno:"Open it in the Arduino IDE and upload it",runOther:"Download the file and open it in your program",bytes:"bytes",copy:"Copy",copied:"Copied",download:"Download",openCode:"Open code",lines:"lines",codeSaid:"The code is open in the window on the right.",name:"English",title:"QWENTITY",ready:"ready",thinking:"thinking",speaking:"speaking",listening:"listening",waiting:"waiting for “Qwentity”",
+  wake:"“Qwentity”",on:"on",off:"off",voice:"Voice",settings:"Settings",wakeTip:"Keep listening for the word “Qwentity”",
+  keyLabel:"Gemini API key (free):",langLabel:"Microphone language (I reply in the language you use)",modelLabel:"Model",aboutLabel:"Who we are (Qwentity will take this into account)",
+  aboutPh:"For example: we are a makerspace in Luxembourg working with teens aged 12–15; we have laser cutters, 3D printers, a plotter and a podcast studio.",
+  jarvis:"Qwentity",you:"You",intro:"Tap the circle and speak. When you stop, I answer out loud. First paste your free Gemini key into “Settings”.",
+  mic:"Tap and speak",qPh:"…or type a question",send:"Ask",speak:"Speak…",think:"Thinking…",sources:"Sources:",yes:"Yes?",
+  wakeHint:"Say “Qwentity” and your question",noSpeech:"I didn’t hear anything. Tap and try again.",denied:"The browser blocked the microphone. Allow it (icon left of the address) and try again.",
+  micErr:"Microphone error: ",noSR:"This browser can’t recognise speech. Open the file in Google Chrome or Microsoft Edge.",
+  needKey:"A Gemini key is needed. Open “Settings” and paste it.",badKey:"The key doesn’t work. Check it in “Settings”.",quota:"The free limit is used up for now. Wait a minute and ask again.",offline:"No internet connection.",empty:"Empty answer. Try asking differently."},
+ it:{again:"Altra versione",photoSearching:"Cerco foto vere…",photoNone:"Nessuna foto libera trovata — guarda su Google Immagini.",moreGoogle:"Altre foto su Google Immagini",photoSaid:"Ecco foto vere.",improving:"Controllo e miglioro il codice…",improved:"✓ Codice controllato e migliorato",errBar:"Errore nel programma:",fix:"Correggi",fixPrompt:"Nel file {f} c’è un errore durante l’esecuzione: {e}. Trova la causa e manda il file completo corretto.",chats:"Chat",newChat:"+ Nuova chat",untitled:"Nuova chat",imgMaking:"Sto disegnando… (10–30 s)",imgSaid:"L’immagine è pronta.",imgFail:"Non sono riuscito a creare l’immagine. Il servizio gratuito permette circa un’immagine ogni 15 secondi — aspetta e riprova.",prompt:"Descrizione",codeTab:"Codice",prevTab:"File",runPy:"Avvio: python ",runIno:"Aprilo nell’Arduino IDE e caricalo sulla scheda",runOther:"Scarica il file e aprilo nel tuo programma",bytes:"byte",copy:"Copia",copied:"Copiato",download:"Scarica",openCode:"Apri il codice",lines:"righe",codeSaid:"Il codice è aperto nella finestra a destra.",name:"italiano",title:"QWENTITY",ready:"pronto",thinking:"sto pensando",speaking:"sto parlando",listening:"ascolto",waiting:"aspetto «Qwentity»",
+  wake:"«Qwentity»",on:"on",off:"off",voice:"Voce",settings:"Impostazioni",wakeTip:"Ascolta sempre la parola «Qwentity»",
+  keyLabel:"Chiave API Gemini (gratis):",langLabel:"Lingua (parli e ricevi la risposta)",modelLabel:"Modello",aboutLabel:"Chi siamo (Qwentity ne terrà conto)",
+  aboutPh:"Per esempio: siamo un makerspace in Lussemburgo, lavoriamo con ragazzi di 12–15 anni, abbiamo laser cutter, stampanti 3D, un plotter e uno studio podcast.",
+  jarvis:"Qwentity",you:"Tu",intro:"Tocca il cerchio e parla. Quando smetti, rispondo a voce. Prima incolla la tua chiave Gemini gratuita in «Impostazioni».",
+  mic:"Tocca e parla",qPh:"…o scrivi una domanda",send:"Chiedi",speak:"Parla…",think:"Sto pensando…",sources:"Fonti:",yes:"Sì?",
+  wakeHint:"Di’ «Qwentity» e la domanda",noSpeech:"Non ho sentito niente. Tocca e riprova.",denied:"Il browser ha bloccato il microfono. Consentilo (icona a sinistra dell’indirizzo) e riprova.",
+  micErr:"Errore del microfono: ",noSR:"Questo browser non riconosce la voce. Apri il file in Google Chrome o Microsoft Edge.",
+  needKey:"Serve una chiave Gemini. Apri «Impostazioni» e incollala.",badKey:"La chiave non funziona. Controllala in «Impostazioni».",quota:"Il limite gratuito è esaurito per ora. Aspetta un minuto e riprova.",offline:"Nessuna connessione internet.",empty:"Risposta vuota. Prova a chiedere in un altro modo."},
+ de:{again:"Andere Version",photoSearching:"Ich suche echte Fotos…",photoNone:"Keine freien Fotos gefunden — schau in der Google-Bildersuche.",moreGoogle:"Mehr Fotos in der Google-Bildersuche",photoSaid:"Hier sind echte Fotos.",improving:"Ich prüfe und verbessere den Code…",improved:"✓ Code geprüft und verbessert",errBar:"Fehler im Programm:",fix:"Beheben",fixPrompt:"In der Datei {f} tritt beim Ausführen ein Fehler auf: {e}. Finde die Ursache und schick die vollständige korrigierte Datei.",chats:"Chats",newChat:"+ Neuer Chat",untitled:"Neuer Chat",imgMaking:"Ich zeichne… (10–30 s)",imgSaid:"Das Bild ist fertig.",imgFail:"Das Bild konnte nicht erstellt werden. Der kostenlose Dienst erlaubt etwa ein Bild alle 15 Sekunden — warte kurz und frag nochmal.",prompt:"Beschreibung",codeTab:"Code",prevTab:"Datei",runPy:"Starten: python ",runIno:"In der Arduino IDE öffnen und hochladen",runOther:"Datei herunterladen und im Programm öffnen",bytes:"Bytes",copy:"Kopieren",copied:"Kopiert",download:"Herunterladen",openCode:"Code öffnen",lines:"Zeilen",codeSaid:"Der Code ist im Fenster rechts geöffnet.",name:"Deutsch",title:"QWENTITY",ready:"bereit",thinking:"ich denke nach",speaking:"ich spreche",listening:"ich höre zu",waiting:"warte auf „Qwentity“",
+  wake:"„Qwentity“",on:"an",off:"aus",voice:"Stimme",settings:"Einstellungen",wakeTip:"Ständig auf das Wort „Qwentity“ hören",
+  keyLabel:"Gemini-API-Schlüssel (kostenlos):",langLabel:"Sprache (Sprechen und Antwort)",modelLabel:"Modell",aboutLabel:"Wer wir sind (Qwentity berücksichtigt das)",
+  aboutPh:"Zum Beispiel: Wir sind ein Makerspace in Luxemburg, arbeiten mit Jugendlichen von 12–15 Jahren und haben Laserschneider, 3D-Drucker, einen Plotter und ein Podcast-Studio.",
+  jarvis:"Qwentity",you:"Du",intro:"Tippe auf den Kreis und sprich. Wenn du aufhörst, antworte ich laut. Füge zuerst deinen kostenlosen Gemini-Schlüssel in „Einstellungen“ ein.",
+  mic:"Tippen und sprechen",qPh:"…oder Frage tippen",send:"Fragen",speak:"Sprich…",think:"Ich denke nach…",sources:"Quellen:",yes:"Ja?",
+  wakeHint:"Sag „Qwentity“ und deine Frage",noSpeech:"Ich habe nichts gehört. Tippe und versuch es nochmal.",denied:"Der Browser hat das Mikrofon blockiert. Erlaube es (Symbol links neben der Adresse) und versuch es nochmal.",
+  micErr:"Mikrofonfehler: ",noSR:"Dieser Browser kann keine Sprache erkennen. Öffne die Datei in Google Chrome oder Microsoft Edge.",
+  needKey:"Ein Gemini-Schlüssel wird benötigt. Öffne „Einstellungen“ und füge ihn ein.",badKey:"Der Schlüssel funktioniert nicht. Prüfe ihn in „Einstellungen“.",quota:"Das kostenlose Limit ist gerade aufgebraucht. Warte eine Minute.",offline:"Keine Internetverbindung.",empty:"Leere Antwort. Frag anders."}
+};
+const L=()=>"en";                       // интерфейс всегда на английском
+const t=k=>T.en[k];
+// Определяем язык текста: en / ru / fr / de / it
+function detectLang(s){
+  s=" "+String(s||"").toLowerCase()+" ";
+  if(/[а-яё]/.test(s)) return "ru";
+  const score={en:0,fr:0,de:0,it:0};
+  if(/[äöüß]/.test(s)) score.de+=3;
+  if(/[òì]/.test(s)) score.it+=2;
+  if(/[çœêëîïûÿ]|[àâ](?!\w*[òì])/.test(s)) score.fr+=2;
+  const W={en:/\b(the|and|is|are|what|how|you|please|can|make|create|show|with|for|this)\b/g,
+           fr:/\b(le|la|les|des|est|je|tu|vous|pour|avec|une|bonjour|merci|comment|fais|montre|quoi|qui|c'est|pourquoi)\b/g,
+           de:/\b(der|die|das|und|ist|ich|du|nicht|bitte|mit|ein|eine|wie|was|warum|zeig|mach)\b/g,
+           it:/\b(il|che|non|sono|perché|della|ciao|grazie|questo|una|fammi|mostrami|cosa|come si)\b/g};
+  for(const k in W) score[k]+=((s.match(W[k])||[]).length);
+  let best="en",bv=0; for(const k in score) if(score[k]>bv){ best=k; bv=score[k]; }
+  return best;
+}
+const SPEECH={en:"en-US",ru:"ru-RU",fr:"fr-FR",de:"de-DE",it:"it-IT"};
+let statusKey="ready";
+function setStatus(k){ statusKey=k; statusEl.textContent=t(k); }
+function applyLang(){
+  document.documentElement.lang=L();
+  document.title="Qwentity";
+  $("title").textContent=t("title");
+  document.querySelectorAll("[data-t]").forEach(el=>el.textContent=t(el.dataset.t));
+  $("about").placeholder=t("aboutPh");
+  $("q").placeholder=t("qPh"); $("send").textContent=t("send");
+  mic.setAttribute("aria-label",t("mic"));
+  $("setBtn").textContent=t("settings");
+  $("wake").title=t("wakeTip");
+  paintVoice(); paintWake(); paintPane(); paintChats(); setStatus(statusKey);
+  if(!SR){ interim.textContent=t("noSR"); }
+}
+
+// ---------- настройки ----------
+if(!S.get("jv-lang-v2")){ S.set("jv-lang","en-US"); S.set("jv-lang-v2","1"); }
+["key","lang","about"].forEach(id=>{ const v=S.get("jv-"+id); if(v!==null) $(id).value=v; $(id).addEventListener("input",()=>S.set("jv-"+id,$(id).value)); $(id).addEventListener("change",()=>S.set("jv-"+id,$(id).value)); });
+$("model").addEventListener("change",()=>S.set("jv-model",$("model").value));
+$("setBtn").onclick=()=>{ const s=$("settings"); s.hidden=!s.hidden; $("setBtn").setAttribute("aria-expanded",!s.hidden); };
+if(!$("key").value.trim()) $("key").value=DEFAULT_KEY;
+$("key").addEventListener("change",loadModels);
+function paintMicLang(){ document.querySelectorAll(".mic-langs button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.l===$("lang").value)); }
+function setMicLang(code){ if($("lang").value===code) return; $("lang").value=code; S.set("jv-lang",code); paintMicLang(); if(wakeOn){ stopRec(); startWake(); } }
+document.querySelectorAll(".mic-langs button").forEach(b=>b.onclick=()=>setMicLang(b.dataset.l));
+$("lang").addEventListener("change",()=>{ paintMicLang(); if(wakeOn){ stopRec(); startWake(); } });
+
+async function loadModels(){
+  const key=$("key").value.trim(); if(!key) return;
+  try{
+    const r=await fetch(API+"/models?pageSize=200",{headers:{"x-goog-api-key":key}});
+    if(!r.ok) return;
+    const j=await r.json();
+    const names=(j.models||[]).filter(m=>(m.supportedGenerationMethods||[]).includes("generateContent"))
+      .map(m=>m.name.replace("models/","")).filter(n=>/^gemini/.test(n)&&!/(tts|image|live|embed|audio|robotics|computer)/.test(n));
+    if(!names.length) return;
+    const score=n=>(/flash/.test(n)?100:0)-(/lite/.test(n)?50:0)+(parseFloat((n.match(/gemini-(\d+(\.\d+)?)/)||[0,0])[1])*10)+(/latest/.test(n)?5:0);
+    names.sort((a,b)=>score(b)-score(a));
+    const sel=$("model"), saved=S.get("jv-model");
+    sel.innerHTML=""; names.forEach(n=>{ const o=document.createElement("option"); o.value=o.textContent=n; sel.append(o); });
+    sel.value = names.includes(saved) ? saved : names[0];
+  }catch(e){}
+}
+
+// ---------- озвучка ----------
+let voiceOn=S.get("jv-voice")!=="off";
+function paintVoice(){ $("voice").setAttribute("aria-pressed",voiceOn); $("voice").textContent=t("voice")+": "+t(voiceOn?"on":"off"); }
+$("voice").onclick=()=>{ voiceOn=!voiceOn; S.set("jv-voice",voiceOn?"on":"off"); paintVoice(); if(!voiceOn) stopSpeaking(); };
+// Chrome обрывает длинную речь (~15 с) и не сообщает об этом, поэтому читаем по кусочкам
+let speakGen=0;
+function speak(text){
+  const gen=++speakGen;
+  return new Promise(res=>{
+    if(!voiceOn||!window.speechSynthesis) return res();
+    speechSynthesis.cancel();
+    const clean=text.replace(/```photo[\s\S]*?(```|$)/g," "+t("photoSaid")+" ").replace(/```image[\s\S]*?(```|$)/g," "+t("imgSaid")+" ").replace(/```[\s\S]*?(```|$)/g," "+t("codeSaid")+" ").replace(/https?:\/\/\S+/g,"").replace(/\[(.*?)\]\(.*?\)/g,"$1").replace(/[*#`_>|]/g,"");
+    const parts=(clean.match(/[^.!?…\n]+[.!?…]*\s*/g)||[clean]).reduce((acc,s)=>{ const last=acc[acc.length-1]; if(last&&(last+s).length<180) acc[acc.length-1]=last+s; else acc.push(s); return acc; },[]).map(s=>s.trim()).filter(Boolean);
+    const short=detectLang(clean), full=SPEECH[short]||"en-US";
+    const vs=speechSynthesis.getVoices();
+    const v=vs.find(v=>v.lang===full)||vs.find(v=>v.lang&&v.lang.toLowerCase().startsWith(short));
+    let i=0, safety=null;
+    const next=()=>{
+      clearTimeout(safety);
+      if(gen!==speakGen||i>=parts.length) return res();
+      const u=new SpeechSynthesisUtterance(parts[i++]);
+      if(v) u.voice=v; u.lang=v?v.lang:full;
+      u.onend=u.onerror=next;
+      safety=setTimeout(next, 4000+u.text.length*120);  // на случай, если onend не придёт
+      speechSynthesis.speak(u);
+    };
+    next();
+  });
+}
+function stopSpeaking(){ speakGen++; try{speechSynthesis.cancel()}catch(e){} }
+speechSynthesis.getVoices();
+
+// ---------- чат ----------
+let busy=false; let reqCtl=null;
+// ---------- чаты (сохраняются в браузере) ----------
+let chats=[]; try{ chats=JSON.parse(S.get("jv-chats")||"[]"); }catch(e){ chats=[]; }
+let curId=S.get("jv-cur");
+function saveChats(){ S.set("jv-chats",JSON.stringify(chats.slice(0,100))); S.set("jv-cur",curId||""); }
+function cur(){ let c=chats.find(c=>c.id===curId); if(!c){ c={id:String(Date.now()),title:"",updated:Date.now(),turns:[]}; chats.unshift(c); curId=c.id; } return c; }
+function apiTurns(){ let tt=cur().turns.slice(-20); while(tt.length&&tt[0].role!=="user") tt=tt.slice(1); return tt; }
+function introMsg(){ addMsg("j intro",t("jarvis"),t("intro")); }
+function renderChat(){
+  log.textContent="";
+  const c=cur();
+  if(!c.turns.length) introMsg();
+  for(const tr of c.turns){
+    const text=tr.parts.map(p=>p.text||"").join("");
+    if(tr.role==="user") addMsg("u",t("you"),text);
+    else { const el=addMsg("j",t("jarvis"),""); renderAnswer(el.querySelector(".body"),text,false); }
+  }
+  log.scrollTop=log.scrollHeight;
+  renderList();
+}
+function renderList(){
+  const list=$("chatList"); list.textContent="";
+  chats.filter(c=>c.turns.length||c.id===curId).sort((a,b)=>b.updated-a.updated).forEach(c=>{
+    const row=document.createElement("div"); row.className="chat-item"+(c.id===curId?" active":"");
+    const o=document.createElement("button"); o.className="open"; o.type="button";
+    o.textContent=c.title||t("untitled");
+    const w=document.createElement("span"); w.className="when"; w.textContent=new Date(c.updated).toLocaleString(document.documentElement.lang,{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"}); o.append(w);
+    o.onclick=()=>{ switchChat(c.id); closeDrawer(); };
+    const d=document.createElement("button"); d.className="del"; d.type="button"; d.textContent="✕"; d.setAttribute("aria-label","Delete");
+    d.onclick=()=>{ chats=chats.filter(x=>x.id!==c.id); if(curId===c.id) curId=null; saveChats(); renderChat(); };
+    row.append(o,d); list.append(row);
+  });
+}
+function switchChat(id){
+  if(reqCtl){ reqCtl.abort(); reqCtl=null; busy=false; mic.classList.remove("busy"); }
+  stopSpeaking(); curId=id; saveChats();
+  $("pane").hidden=true; document.body.classList.remove("pane-open");
+  renderChat(); setStatus("ready");
+}
+function newChat(){
+  const empty=chats.find(c=>!c.turns.length);
+  if(empty){ switchChat(empty.id); return; }
+  const c={id:String(Date.now()),title:"",updated:Date.now(),turns:[]}; chats.unshift(c); switchChat(c.id);
+}
+function openDrawer(){ renderList(); $("drawer").hidden=false; $("scrim").hidden=false; $("chatsBtn").setAttribute("aria-expanded","true"); }
+function closeDrawer(){ $("drawer").hidden=true; $("scrim").hidden=true; $("chatsBtn").setAttribute("aria-expanded","false"); }
+$("chatsBtn").onclick=()=>$("drawer").hidden?openDrawer():closeDrawer();
+$("drawerClose").onclick=closeDrawer; $("scrim").onclick=closeDrawer;
+$("newChat").onclick=()=>{ newChat(); };
+$("newChat2").onclick=()=>{ newChat(); closeDrawer(); };
+
+// ---------- картинки (бесплатно через Pollinations, без ключа) ----------
+// ---------- настоящие фото (Wikimedia Commons + Openverse, бесплатно) ----------
+const photoCache={};
+async function searchPhotos(q){
+  if(photoCache[q]) return photoCache[q];
+  const out=[];
+  try{
+    const u="https://commons.wikimedia.org/w/api.php?action=query&format=json&origin=*&generator=search&gsrnamespace=6&gsrlimit=8&prop=imageinfo&iiprop=url|extmetadata&iiurlwidth=800&gsrsearch="+encodeURIComponent(q+" filetype:bitmap");
+    const j=await (await fetch(u)).json();
+    Object.values((j.query&&j.query.pages)||{}).sort((a,b)=>(a.index||0)-(b.index||0)).forEach(pg=>{
+      const ii=(pg.imageinfo||[])[0]; if(!ii) return;
+      out.push({thumb:ii.thumburl||ii.url,full:ii.thumburl||ii.url,page:ii.descriptionurl,source:"Wikimedia Commons",title:(pg.title||"").replace(/^File:/,"").replace(/\.\w+$/,"")});
+    });
+  }catch(e){}
+  if(out.length<4){
+    try{
+      const j=await (await fetch("https://api.openverse.org/v1/images/?page_size=8&q="+encodeURIComponent(q))).json();
+      (j.results||[]).forEach(r=>out.push({thumb:r.thumbnail||r.url,full:r.url,page:r.foreign_landing_url||r.url,source:r.source||"Openverse",title:r.title||q}));
+    }catch(e){}
+  }
+  photoCache[q]=out.slice(0,8);
+  return photoCache[q];
+}
+function renderPhotos(el,q){
+  const note=document.createElement("span"); note.className="photo-note"; note.textContent=t("photoSearching"); el.append(note);
+  const grid=document.createElement("div"); grid.className="photos"; el.append(grid);
+  const g=document.createElement("span"); g.className="photo-note";
+  const a=document.createElement("a"); a.href="https://www.google.com/search?tbm=isch&q="+encodeURIComponent(q); a.target="_blank"; a.rel="noopener"; a.textContent=t("moreGoogle")+" ↗";
+  g.append(a); el.append(g);
+  searchPhotos(q).then(list=>{
+    note.textContent=list.length? q : t("photoNone");
+    list.forEach((ph,i)=>{
+      const b=document.createElement("button"); b.type="button";
+      const im=document.createElement("img"); im.src=ph.thumb; im.alt=ph.title; im.loading="lazy"; im.referrerPolicy="no-referrer";
+      im.onerror=()=>b.remove();
+      const s=document.createElement("span"); s.className="ps"; s.textContent=ph.source;
+      b.append(im,s);
+      b.onclick=()=>openPane({type:"image",lang:"photo",url:ph.full,prompt:ph.title,code:ph.title+"\n"+ph.page,name:(ph.title||"photo").slice(0,40).replace(/[^\w.-]+/g,"_")+".jpg",page:ph.page});
+      grid.append(b);
+    });
+  });
+}
+const SIZES={square:[1024,1024],wide:[1344,768],tall:[768,1344]};
+function imageUrl(prompt,seed,size){ const [w,hh]=SIZES[size]||SIZES.square; return "https://image.pollinations.ai/prompt/"+encodeURIComponent(prompt.slice(0,900))+"?width="+w+"&height="+hh+"&nologo=true&model=flux&seed="+seed; }
+function addSeeds(text){ return text.replace(/```image[^\S\n]*([^\n]*)\n/g,(m,info)=>/seed=\d+/.test(info)?m:"```image "+(info.match(/size=\w+/)||[""])[0]+" seed="+Math.floor(Math.random()*1e9)+"\n"); }
+async function downloadImage(c){
+  try{ const r=await fetch(c.url); const b=await r.blob(); const a=document.createElement("a"); a.href=URL.createObjectURL(b); a.download=c.name; document.body.append(a); a.click(); setTimeout(()=>{URL.revokeObjectURL(a.href); a.remove();},1000); }
+  catch(e){ window.open(c.url,"_blank","noopener"); }
+}
+// ---------- окно кода ----------
+const EXT={python:"py",py:"py",javascript:"js",js:"js",typescript:"ts",html:"html",css:"css",json:"json",cpp:"ino",arduino:"ino",c:"c",java:"java",bash:"sh",sh:"sh",shell:"sh",sql:"sql",svg:"svg",xml:"xml",markdown:"md",md:"md",micropython:"py",yaml:"yml",csharp:"cs",cs:"cs",go:"go",rust:"rs",lua:"lua"};
+let current=null;
+function splitAnswer(text){
+  const parts=[]; const re=/```([\w+#.-]*)[ \t]*([^\n]*)\n([\s\S]*?)(```|$)/g; let last=0,m;
+  while((m=re.exec(text))){ if(m.index>last) parts.push({type:"text",text:text.slice(last,m.index)}); { const lang=(m[1]||"text").toLowerCase();
+    if(lang==="photo"){ parts.push({type:"photo",query:m[3].trim().split("\n")[0]}); last=re.lastIndex; continue; }
+    if(lang==="image"){ const seed=((m[2].match(/seed=(\d+)/)||[])[1])||"1"; const size=((m[2].match(/size=(square|wide|tall)/)||[])[1])||"square"; const pr=m[3].trim().replace(/\s+/g," "); parts.push({type:"image",lang:"image",prompt:pr,code:pr,seed,size,url:imageUrl(pr,seed,size),name:"qwentity-"+seed+".jpg"}); last=re.lastIndex; continue; }
+    const nm=(m[2].match(/[\w.-]+\.[a-z0-9]{1,5}/i)||[])[0]; parts.push({type:"code",lang,code:m[3].replace(/\n$/,""),name:nm||("qwentity."+(EXT[lang]||"txt"))}); } last=re.lastIndex; }
+  if(last<text.length) parts.push({type:"text",text:text.slice(last)});
+  return parts;
+}
+function canPreview(c){ return ["html","svg","xml"].includes(c.lang)&&/<(html|body|div|svg|canvas|script|h1|p)\b/i.test(c.code) || (c.lang==="html"); }
+function renderAnswer(el, text, autoOpen=true){
+  el.textContent=""; let lastCode=null;
+  for(const p of splitAnswer(text)){
+    if(p.type==="text"){ const s=p.text.replace(/^\n+|\n+$/g,""); if(s) el.append(document.createTextNode(s+"\n")); continue; }
+    if(p.type==="photo"){ renderPhotos(el,p.query); continue; }
+    if(p.type==="image"){
+      const card=document.createElement("button"); card.type="button"; card.className="img-card";
+      const img=document.createElement("img"); img.alt=p.prompt; img.loading="lazy";
+      const cap=document.createElement("div"); cap.className="cap"; const ct=document.createElement("span"); ct.textContent=t("imgMaking"); cap.append(ct);
+      const dl=document.createElement("span"); dl.className="dl"; dl.setAttribute("role","button"); dl.tabIndex=0; dl.textContent=t("download"); dl.hidden=true;
+      dl.onclick=e=>{ e.stopPropagation(); downloadImage(p); };
+      dl.onkeydown=e=>{ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); e.stopPropagation(); downloadImage(p); } };
+      const again=document.createElement("span"); again.className="again"; again.setAttribute("role","button"); again.tabIndex=0; again.textContent="↻ "+t("again"); again.hidden=true;
+      const reroll=e=>{ e.stopPropagation();
+        const ns=String(Math.floor(Math.random()*1e9)), old="seed="+p.seed;
+        cur().turns.forEach(tr=>tr.parts.forEach(pt=>{ if(pt.text&&pt.text.includes(old)) pt.text=pt.text.replace(old,"seed="+ns); })); saveChats();
+        p.seed=ns; p.url=imageUrl(p.prompt,ns,p.size); p.name="qwentity-"+ns+".jpg";
+        ct.textContent=t("imgMaking"); dl.hidden=true; again.hidden=true; img.hidden=false; tries=0; st=step("picture",box); img.src=p.url;
+        if(current===p) openPane(p);
+      };
+      again.onclick=reroll; again.onkeydown=e=>{ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); reroll(e); } };
+      cap.append(again,dl);
+      const box=el.parentElement&&el.parentElement.querySelector(".trace");
+      let st=step("picture",box), tries=0; health("hImg","run");
+      img.onload=()=>{ ct.textContent=p.prompt; dl.hidden=false; again.hidden=false; st.done(); health("hImg","ok","Images OK"); p.url=img.src; if(current===p) $("imgBig").src=img.src; };
+      img.onerror=async()=>{
+        let why="";
+        try{ const r=await fetch(p.url,{cache:"no-store"}); why="HTTP "+r.status+(r.status===429?" (limit)":""); }catch(e){ why="no connection"; }
+        health("hImg","err","Images: "+why);
+        if(tries++<1){ st.fail(why+" → retry 16s"); ct.textContent=t("imgMaking"); setTimeout(()=>{ st=step("picture retry",box); img.src=p.url+"&r="+Date.now(); },16000); return; }
+        st.fail(why); ct.textContent=t("imgFail")+" ("+why+")"; img.hidden=true; again.hidden=false;
+      };
+      img.src=p.url;
+      card.append(img,cap); card.onclick=()=>openPane(p); el.append(card); lastCode=p; continue;
+    }
+    const b=document.createElement("button"); b.type="button"; b.className="code-chip";
+    const ic=document.createElement("span"); ic.className="ic"; ic.textContent="</>";
+    const tx=document.createElement("span"); tx.className="nm"; tx.textContent=p.name; const meta=document.createElement("span"); meta.className="meta"; meta.textContent=p.lang+" · "+p.code.split("\n").length+" "+t("lines"); tx.append(meta);
+    const dl=document.createElement("span"); dl.className="dl"; dl.setAttribute("role","button"); dl.tabIndex=0; dl.textContent=t("download");
+    dl.onclick=e=>{ e.stopPropagation(); downloadFile(p); };
+    dl.onkeydown=e=>{ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); e.stopPropagation(); downloadFile(p); } };
+    b.append(ic,tx,dl); b.onclick=()=>openPane(p); el.append(b); lastCode=p;
+  }
+  if(lastCode&&autoOpen) openPane(lastCode);
+}
+function openPane(c){
+  current=c; $("pane").hidden=false; document.body.classList.add("pane-open");
+  $("paneTitle").textContent=c.name;
+  const ce=$("codeEl"); ce.className=""; ce.textContent=c.code;
+  if(window.hljs){ try{ if(hljs.getLanguage(c.lang)) ce.className="language-"+c.lang; hljs.highlightElement(ce); }catch(e){} }
+  c.preview=c.type!=="image"&&canPreview(c);
+  if(c.type==="image"){ $("imgBig").src=c.url; $("imgBig").alt=c.prompt; }
+  $("errBar").hidden=true; lastErr2=null;
+  $("preview").srcdoc=c.preview?withCatcher(c.code):"";
+  $("fvIcon").textContent="."+(c.name.split(".").pop());
+  $("fvName").textContent=c.name;
+  $("fvMeta").textContent=c.code.split("\n").length+" "+t("lines")+" · "+new Blob([c.code]).size+" "+t("bytes");
+  const ext=c.name.split(".").pop().toLowerCase();
+  $("fvRun").textContent= ext==="py" ? t("runPy")+c.name : ext==="ino" ? t("runIno") : t("runOther");
+  $("fvDl").textContent=t("download");
+  showTab("prev");
+}
+// Ловим ошибки запущенной программы и предлагаем их исправить
+const CATCH="<script>(function(){function s(m){try{parent.postMessage({jvErr:String(m).slice(0,400)},'*')}catch(e){}}window.addEventListener('error',function(e){s((e.message||'Error')+(e.lineno?' (line '+e.lineno+')':''))});window.addEventListener('unhandledrejection',function(e){s('Promise: '+((e.reason&&e.reason.message)||e.reason))});var ce=console.error;console.error=function(){s([].slice.call(arguments).join(' '));ce.apply(console,arguments)}})();<\/script>";
+function withCatcher(code){ return /<head[^>]*>/i.test(code) ? code.replace(/<head[^>]*>/i,m=>m+CATCH) : CATCH+code; }
+let lastErr2=null;
+window.addEventListener("message",e=>{
+  if(!e.data||!e.data.jvErr||!current||e.source!==$("preview").contentWindow) return;
+  if(lastErr2) return; lastErr2=e.data.jvErr;
+  $("errText").textContent=t("errBar")+" "+lastErr2; $("errBar").hidden=false;
+});
+$("fixBtn").onclick=()=>{ if(!current||!lastErr2) return; const msg=t("fixPrompt").replace("{f}",current.name).replace("{e}",lastErr2); $("errBar").hidden=true; ask(msg); };
+function showTab(which){
+  $("tabCode").setAttribute("aria-selected",which==="code"); $("tabPrev").setAttribute("aria-selected",which==="prev");
+  $("codeView").hidden=which!=="code";
+  $("prevView").hidden=!(which==="prev"&&current&&current.preview);
+  $("fileView").hidden=!(which==="prev"&&current&&!current.preview&&current.type!=="image");
+  $("imgView").hidden=!(which==="prev"&&current&&current.type==="image");
+}
+$("tabCode").onclick=()=>showTab("code");
+$("tabPrev").onclick=()=>showTab("prev");
+$("closeBtn").onclick=()=>{ $("pane").hidden=true; document.body.classList.remove("pane-open"); };
+$("copyBtn").onclick=async()=>{ if(!current) return; try{ await navigator.clipboard.writeText(current.code); }catch(e){ const r=document.createRange(); r.selectNodeContents($("codeEl")); const s=getSelection(); s.removeAllRanges(); s.addRange(r); document.execCommand("copy"); } $("copyBtn").textContent=t("copied"); setTimeout(()=>$("copyBtn").textContent=t("copy"),1500); };
+function downloadFile(c){ const a=document.createElement("a"); a.href=URL.createObjectURL(new Blob([c.code],{type:"text/plain"})); a.download=c.name; document.body.append(a); a.click(); setTimeout(()=>{URL.revokeObjectURL(a.href); a.remove();},1000); }
+$("dlBtn").onclick=()=>{ if(!current) return; current.type==="image"?downloadImage(current):downloadFile(current); };
+$("fvDl").onclick=()=>{ if(current) downloadFile(current); };
+$("closeBtn").addEventListener("click",()=>{ $("imgBig").removeAttribute("src"); });
+function paintChats(){ $("chatsBtn").textContent="☰ "+t("chats"); $("newChat").textContent=t("newChat"); $("newChat2").textContent=t("newChat"); $("chatsTitle").textContent=t("chats"); }
+function paintFix(){ $("fixBtn").textContent=t("fix"); }
+function paintPane(){ paintFix(); $("tabCode").textContent=t("codeTab"); $("tabPrev").textContent=t("prevTab"); $("fvDl").textContent=t("download"); $("copyBtn").textContent=t("copy"); $("dlBtn").textContent=t("download"); }
+
+function addMsg(cls,who,text){
+  const el=document.createElement("div"); el.className="msg "+cls;
+  const w=document.createElement("span"); w.className="who"; w.textContent=who;
+  const b=document.createElement("span"); b.className="body"; b.textContent=text;
+  el.append(w,b); log.append(el); log.scrollTop=log.scrollHeight; return el;
+}
+// Проверенный рецепт, как сделать своё ИИ-приложение на Gemini (модель может не знать свежий API)
+const AI_BLUEPRINT=`BUILDING AI APPS — verified reference, follow it exactly when the user wants a chatbot / assistant / "an AI like you" / anything that calls an AI model:
+- Default: ONE self-contained HTML file (inline CSS+JS, no build step) that works when opened from disk in Chrome. Put the key at the very top: const API_KEY = "…"; If the user gave a key in the chat, put THAT key there; otherwise "PASTE_YOUR_GEMINI_KEY_HERE" plus a settings field that saves the key in localStorage. Warn in one sentence not to share a file that contains the key.
+- Endpoint: POST https://generativelanguage.googleapis.com/v1beta/models/MODEL:generateContent with headers {"Content-Type":"application/json","x-goog-api-key":API_KEY}. Streaming: POST …/models/MODEL:streamGenerateContent?alt=sse (same body) — read response.body with getReader(), split on "\\n", parse each line that starts with "data: " as JSON, append its text parts as they arrive.
+- Body: {systemInstruction:{parts:[{text:SYSTEM}]}, contents:[{role:"user",parts:[{text:"…"}]},{role:"model",parts:[{text:"…"}]},…], tools:[{google_search:{}}], generationConfig:{maxOutputTokens:8192,thinkingConfig:{thinkingBudget:-1}}}. contents must start with a "user" turn; keep the last ~20 turns.
+- Answer text: data.candidates[0].content.parts.filter(p=>p.text && !p.thought).map(p=>p.text).join(""). Web sources: data.candidates[0].groundingMetadata.groundingChunks[i].web.{uri,title}.
+- Models: start with "gemini-flash-latest", fall back to "gemini-flash-lite-latest". On HTTP 429 (free quota) retry WITHOUT tools, then with the next model; on 400 mentioning thinking/generation config retry without generationConfig; show the real error message from data.error.message to the user if everything fails. List models: GET https://generativelanguage.googleapis.com/v1beta/models with the same header.
+- Must-have quality: chat bubbles; Markdown rendering done safely (escape HTML first, then **bold**, \`code\`, lists, fenced code blocks with a Copy button); auto-scroll; Enter to send, Shift+Enter new line; "Thinking…" indicator and a Stop button (AbortController); New chat + saved chat list in localStorage (wrap every localStorage call in try/catch); clear friendly errors; responsive dark/light design; a system prompt that gives the bot its own name and personality.
+- Optional voice (when asked): webkitSpeechRecognition (lang, interimResults) for input; speechSynthesis for output, splitting text into sentence chunks under ~180 characters because Chrome stops long utterances after ~15 s.
+- Free images (when asked): <img src="https://image.pollinations.ai/prompt/"+encodeURIComponent(englishPrompt)+"?width=1024&height=1024&nologo=true&model=flux&seed="+seed>.`;
+const SELF_RE=/(как ты|как у тебя|такой же|копи[юя] себя|себя самого|like you|like yourself|copy of you|comme toi|wie du|come te|qwentity|jarvis)/i;
+function systemText(){
+  const about=$("about").value.trim();
+  const lastQ=((cur().turns.filter(x=>x.role==="user").slice(-1)[0]||{parts:[{text:""}]}).parts[0].text)||"";
+  const self = SELF_RE.test(lastQ) && /(ai|ии|бот|bot|assistant|ассистент|помощник|приложени|app|сделай|make|build|crée|fais|bau|crea)/i.test(lastQ)
+    ? "\n\nYOUR OWN SOURCE CODE (you are this single HTML file; the user wants an AI like you — use it as the reference for features and quality, simplify where sensible, and write the COMPLETE new file):\n"+OWN_SRC.replace(/AQ\.[\w-]{20,}|AIza[\w-]{30,}/g,"PASTE_YOUR_GEMINI_KEY_HERE").slice(0,120000)
+    : "";
+  return AI_BLUEPRINT+"\n\n"+"You are Qwentity, a smart voice assistant and mentor. Your main language is English. You understand English, Russian, French, German and Italian: ALWAYS reply in the same language as the user's LATEST message (if it is mixed or unclear, reply in English). "+
+  "The text of your answer is read aloud: write normal text as plain text, no markdown, asterisks, tables or emoji; numbered points like '1.' are fine. "+
+  "EXCEPTION — code: whenever you write code, put the COMPLETE, runnable code in a fenced block with the language AND a short file name on the opening line, e.g. ```html snake.html or ```python weather.py or ```cpp blink.ino. It opens in a separate code window, so keep the text around it short (what it does, how to run it). "+
+  "PICTURES — two different tools, choose carefully: "+
+  "(A) REAL photos: when the user wants to SEE something that really exists (a real coin, banknote, stamp, building, place, animal, person, product, device, board, logo, event, 'show me how X looks'), NEVER invent a picture. "+
+  "First use Google Search to find the facts, describe what it really looks like in 2–4 sentences, then add a fenced block ```photo containing ONE short precise search query in English (e.g. 'Luxembourg 2 euro commemorative coin 2026'). The page will search real photos with it. "+
+  "(B) GENERATED pictures: ONLY when the user asks you to draw, create, generate, imagine or design something new, reply with one short sentence and a fenced block ```image with the size on the opening line (```image size=square, size=wide or size=tall) and ONE prompt IN ENGLISH on the next line. "+
+  "How to write a GOOD image prompt (the image model is simple and literal): 25–60 words; start with the main subject in plain words; ONE clear subject or a simple scene with at most 2–3 objects; say the exact style (e.g. 'photorealistic photo, 50mm lens', 'clean flat vector illustration', 'Pixar-style 3D render', 'watercolor painting', 'pixel art'); then setting, lighting, colours and camera angle. "+
+  "AVOID things these models draw badly: any written text, letters, numbers, logos with words, labels or captions (write 'no text' at the end); many people; complex hands; crowded scenes; abstract ideas — turn ideas into concrete visible things. Never put the user’s language in the prompt, only English. "+  "IMPORTANT ROUTING: if the user says draw / create / generate / make / imagine a picture or image (нарисуй, создай, сгенерируй картинку, dessine, crée une image, disegna, zeichne…), ALWAYS use (B) and ALWAYS output the ```image block — even when the subject is a real place, object or a real public figure doing something fictional. "+
+  "For a real, identifiable person in (B): use a clearly illustrated, non-photographic style (cartoon, caricature, comic, oil painting) — never photorealistic — and nothing humiliating, sexual or violent. "+
+  "Use (A) only when the user wants to SEE how something real actually looks. If unsure, treat it as real (A). Never say you cannot show or make images. "+
+  "CODING STANDARD (very important): you write code like a senior engineer. Before writing, silently plan the structure, data, controls and edge cases. "+
+  "The code must be COMPLETE and run on the first try: no placeholders, no '...', no 'TODO', no missing imports or functions, every variable defined, valid syntax. "+
+  "Implement EVERYTHING the user asked for, plus the obvious things a good version needs (e.g. for games: start screen, score, restart, increasing difficulty, keyboard AND touch controls, sound only after a click, smooth requestAnimationFrame loop, resizing). "+
+  "Make it look polished: clean modern design, good colours, readable fonts, spacing, animations where they help. "+
+  "Structure code into clear named functions with short comments explaining the important parts, so a teenager can learn from it. "+
+  "For Arduino/ESP32/micro:bit: name the exact board, pins and libraries, use non-blocking millis() timing instead of long delay() when several things happen at once, and include Serial debug output. "+
+  "For Python: standard library where possible; if a package is needed, say the pip install command in one sentence. "+
+  "When the user asks to change or fix code from earlier in the chat, always output the FULL updated file, never only a fragment. "+
+  "For anything visual or interactive (games, web pages, animations, calculators) prefer ONE self-contained HTML file with inline CSS and JS in a ```html block, so it can be previewed live. "+
+  "Answer simple questions briefly. When asked for ideas, advice or a plan, think properly: no generic ideas from typical lists — only original, concrete, doable ones. "+
+  "For project ideas (e.g. for the Jonk Fuerscher / FJSL contest in Luxembourg) give for each: the research question or what is new, what to build or program, what to measure, and why it impresses a jury. Prefer 3–4 strong ideas over 10 weak ones. "+
+  "Use Google Search for news and current facts. Today is "+new Date().toISOString().slice(0,10)+". "+
+  (about?"Who is asking: "+about:"")+self;
+}
+// Пробуем модели по очереди: если у одной нет бесплатного лимита (или на поиск Google), берём следующую
+function modelCandidates(){
+  const opts=[...$("model").options].map(o=>o.value);
+  const pref=["gemini-flash-latest","gemini-2.5-flash","gemini-flash-lite-latest","gemini-2.5-flash-lite"];
+  const list=[$("model").value, ...pref, ...opts.filter(n=>/flash/.test(n))];
+  return [...new Set(list)];
+}
+let lastErr="";
+function thinkingFor(model){
+  if(/gemini-3/.test(model)) return {thinkingLevel:"high"};
+  if(/2\.5|latest/.test(model)) return {thinkingBudget:-1};
+  return null;
+}
+async function callModel(key, model, withSearch, signal, contents, rich=true){
+  const body={ systemInstruction:{parts:[{text:systemText()}]}, contents:contents||apiTurns() };
+  if(withSearch) body.tools=[{google_search:{}}];
+  if(rich){ body.generationConfig={maxOutputTokens:65536}; const th=thinkingFor(model); if(th) body.generationConfig.thinkingConfig=th; }
+  let r=null, netErr=null;
+  for(let attempt=0; attempt<3 && !r; attempt++){
+    try{
+      r=await fetch(API+"/models/"+encodeURIComponent(model)+":generateContent",{
+        method:"POST", signal, headers:{"Content-Type":"application/json","x-goog-api-key":key}, body:JSON.stringify(body)
+      });
+    }catch(e){
+      if(signal&&signal.aborted) throw e;
+      netErr=e; step("network retry "+(attempt+1)).fail(String(e.message||e).slice(0,60));
+      await new Promise(res=>setTimeout(res,1500*(attempt+1)));
+    }
+  }
+  if(!r) throw new Error("NETWORK: "+String((netErr&&netErr.message)||netErr));
+  let j={}; try{ j=await r.json(); }catch(e){}
+  const res={ ok:r.ok, status:r.status, j, msg:(j.error&&j.error.message)||("HTTP "+r.status) };
+  // если модель не поддерживает настройки «думать дольше» — пробуем без них
+  if(!res.ok&&rich&&res.status===400&&/thinking|maxOutputTokens|max_output_tokens|generation_?config/i.test(res.msg)) return callModel(key, model, withSearch, signal, contents, false);
+  return res;
+}
+async function generate(key, signal, out, contents, searchModes=[true,false]){
+  const tried=[];
+  for(const model of modelCandidates()){
+    for(const withSearch of searchModes){
+      const st=step(model+(withSearch?" + Google":"")); health("hGem","run");
+      let res; try{ res=await callModel(key, model, withSearch, signal, contents); }catch(e){ st.fail("network"); throw e; }
+      if(res.ok) { st.done(); health("hGem","ok","Gemini: "+model+" OK"); } else { st.fail(String(res.status)); health("hGem","err","Gemini: "+res.status+" "+res.msg.slice(0,120)); }
+      if(res.ok){
+        if($("model").value!==model){
+          if(![...$("model").options].some(o=>o.value===model)){ const o=document.createElement("option"); o.value=o.textContent=model; $("model").append(o); }
+          $("model").value=model;
+        }
+        S.set("jv-model",model); S.set("jv-search",withSearch?"on":"off");
+        return res.j;
+      }
+      tried.push(model+(withSearch?" +search":"")+": "+res.status);
+      // ключ неверный — дальше пробовать бессмысленно
+      if(res.status===400&&/API key|API_KEY/i.test(res.msg)) throw new Error(res.msg);
+      if(res.status===401||res.status===403){ if(/API key|API_KEY|PERMISSION/i.test(res.msg)) throw new Error(res.msg); }
+      // 404 (нет такой модели) — сразу к следующей модели
+      if(res.status===404) break;
+      lastErr=res.msg;
+      if(res.status!==429&&res.status!==400) break;
+    }
+  }
+  throw new Error(lastErr+" | tried: "+tried.join(", "));
+}
+
+// Второй проход: Qwentity сам проверяет и улучшает свой код
+const REVIEW="Act as a strict senior engineer reviewing the code you just wrote. Mentally run it line by line. Find and fix: syntax errors, runtime errors, undefined variables, missing imports, logic bugs, unfinished parts, anything from my request that is missing or done poorly, bad UX or ugly design, edge cases. Then improve it further so it is clearly better. "+
+  "Output ONLY: one short sentence in the same language as before, then the COMPLETE final file in ONE fenced block with the same language and file name on the opening line. No diff, no list of changes.";
+// ---------- индикатор: что работает, а что нет ----------
+let TRACE=null;
+function health(id,state,title){ const e=$(id); if(!e) return; e.className=state; if(title) e.title=title; }
+function step(label,box){
+  box=box||TRACE; const t0=performance.now();
+  if(!box) return {done(){},fail(){}};
+  const s=document.createElement("span"); s.className="run"; s.textContent="… "+label; box.append(s);
+  const sec=()=>((performance.now()-t0)/1000).toFixed(1)+"s";
+  return { done(d){ s.className="ok"; s.textContent="✓ "+label+" "+(d||sec()); },
+           fail(d){ s.className="err"; s.textContent="✗ "+label+" "+(d||""); } };
+}
+// Если явно просили картинку, а блока ```image нет — сами составляем описание и рисуем
+const WANT_IMG=/(нарису|сгенерир|создай (мне )?(картин|изображ|рисун|фото)|сделай (мне )?(картин|изображ|рисун)|картинк|draw|generate (an? )?(image|picture)|create (an? )?(image|picture)|make (an? )?(image|picture)|image of|picture of|dessine|crée une image|génère une image|disegna|crea un'?immagine|genera un'?immagine|zeichne|erstelle ein bild|generiere ein bild)/i;
+function hasPic(text){ return splitAnswer(text).some(p=>p.type==="image"||p.type==="photo"); }
+async function forceImage(key, signal, question){
+  const ask=[{role:"user",parts:[{text:"Write ONE English prompt (25–60 words) for an AI image generator for this request: \""+question+"\". "+
+    "One clear subject, exact art style, setting, lighting, colours, camera angle, end with 'no text'. If it shows a real, identifiable person, use a clearly illustrated style (cartoon, caricature, comic or painting), not photorealistic. Reply with ONLY the prompt."}]}];
+  const j=await generate(key, signal, null, ask, [false]);
+  const cand=(j.candidates||[])[0]||{};
+  let pr=((cand.content&&cand.content.parts)||[]).filter(p=>p.text&&!p.thought).map(p=>p.text).join(" ").trim().replace(/^```\w*|```$/g,"").replace(/\s+/g," ").replace(/^["']|["']$/g,"");
+  if(pr.length<15||/(I can'?t|I cannot|I'm unable|не могу|je ne peux|non posso|ich kann nicht)/i.test(pr)) return null;
+  return pr;
+}
+// Запасной вариант без Gemini: берём сам запрос
+function localPrompt(q){
+  const s=q.replace(/^(please\s+)?(create|make|generate|draw|show me)\s+(me\s+)?(an?\s+)?(image|picture|drawing|photo)?\s*(of\s+)?/i,"")
+           .replace(/^(нарисуй|сгенерируй|создай|сделай)\s+(мне\s+)?(картинку|изображение|рисунок)?\s*/i,"");
+  return s.trim()+", colorful cartoon illustration, clean composition, soft lighting, no text";
+}
+function hasCode(text){ return splitAnswer(text).some(p=>p.type==="code"); }
+async function reviewCode(key, signal, answer){
+  const contents=[...apiTurns(), {role:"model",parts:[{text:answer}]}, {role:"user",parts:[{text:REVIEW}]}];
+  const j=await generate(key, signal, null, contents, [false]);
+  const cand=(j.candidates||[])[0]||{};
+  const better=((cand.content&&cand.content.parts)||[]).filter(p=>p.text&&!p.thought).map(p=>p.text).join("").trim();
+  const finished=cand.finishReason!=="MAX_TOKENS";
+  return (better&&hasCode(better)&&finished) ? better : null;
+}
+
+async function ask(question){
+  const key=$("key").value.trim();
+  if(!key){ addMsg("j err",t("jarvis"),t("needKey")); $("settings").hidden=false; return; }
+  // новый вопрос важнее старого: прерываем то, что ещё идёт
+  if(reqCtl){ reqCtl.abort(); }
+  stopSpeaking();
+  if(rec) stopRec();
+  const ctl=new AbortController(); reqCtl=ctl;
+  const timer=setTimeout(()=>ctl.abort("timeout"),300000);
+  busy=true;
+  log.querySelectorAll(".intro").forEach(e=>e.remove());
+  addMsg("u",t("you"),question);
+  const turn={role:"user",parts:[{text:question}]};
+  const thisChat=cur();
+  thisChat.turns.push(turn); thisChat.updated=Date.now();
+  if(!thisChat.title) thisChat.title=question.slice(0,48);
+  saveChats();
+  const out=addMsg("j",t("jarvis"),t("think")); mic.classList.add("busy"); setStatus("thinking");
+  const tr=document.createElement("div"); tr.className="trace"; out.append(tr); TRACE=tr;
+  let answer="";
+  try{
+    const j=await generate(key, ctl.signal, out);
+    const cand=(j.candidates||[])[0]||{};
+    answer=((cand.content&&cand.content.parts)||[]).filter(p=>p.text&&!p.thought).map(p=>p.text).join("").trim();
+    if(!answer) throw new Error("EMPTY");
+    if(WANT_IMG.test(question)&&!hasPic(answer)){
+      const st=step("image prompt"); let pr=null;
+      try{ pr=await forceImage(key, ctl.signal, question); }
+      catch(e){ if(reqCtl!==ctl) throw e; }
+      if(pr) st.done(); else { st.fail("→ fallback"); pr=localPrompt(question); }
+      answer=answer+"\n\n```image size=square\n"+pr+"\n```";
+    }
+    answer=addSeeds(answer);
+    renderAnswer(out.querySelector(".body"), answer);
+    if(hasCode(answer)){
+      // показываем первую версию, а пока Qwentity проверяет и улучшает код
+      setStatus("improving");
+      const note=document.createElement("span"); note.className="src"; note.textContent=t("improving"); out.append(note);
+      try{
+        const better=await reviewCode(key, ctl.signal, answer);
+        if(better){ answer=addSeeds(better); renderAnswer(out.querySelector(".body"), answer); note.textContent=t("improved"); }
+        else note.remove();
+      }catch(e){ if(reqCtl!==ctl) throw e; note.remove(); }
+    }
+    const chunks=(cand.groundingMetadata&&cand.groundingMetadata.groundingChunks)||[];
+    if(chunks.length){
+      const s=document.createElement("span"); s.className="src"; s.append(t("sources")+" ");
+      chunks.slice(0,4).forEach((c,i)=>{ if(!c.web) return; const a=document.createElement("a"); a.href=c.web.uri; a.target="_blank"; a.rel="noopener"; a.textContent=c.web.title||("link "+(i+1)); s.append(a," "); });
+      out.append(s);
+    }
+    thisChat.turns.push({role:"model",parts:[{text:answer}]}); thisChat.updated=Date.now(); saveChats();
+    log.scrollTop=log.scrollHeight;
+  }catch(e){
+    const i=thisChat.turns.indexOf(turn); if(i>=0){ thisChat.turns.splice(i,1); saveChats(); }
+    if(reqCtl!==ctl){ out.remove(); clearTimeout(timer); return; }   // заменён новым вопросом
+    out.classList.add("err");
+    let m=String((e&&e.message)||e);
+    const raw=m;
+    if(e&&e.name==="AbortError"||m==="timeout") m="Stopped: no answer from Google for 5 minutes. Try again or ask a shorter question.";
+    else if(m==="EMPTY") m=t("empty");
+    else if(/API key|API_KEY/i.test(m)) m=t("badKey");
+    else if(/quota|RESOURCE_EXHAUSTED|429/i.test(m)) m=t("quota")+"\n\n(Google: "+m.slice(0,300)+")";
+    else if(/NETWORK|Failed to fetch|NetworkError|Load failed/i.test(m)){
+      m = !navigator.onLine ? t("offline")
+        : (window.self!==window.top) ? "Can’t reach Google from inside a preview. Download qwentity.html and open it in Chrome."
+        : /neocities\.org$/i.test(location.hostname) ? "Neocities free plan blocks this: free Neocities sites are not allowed to call other websites’ APIs (Google, Wikimedia). Host the file on GitHub Pages, Netlify or Cloudflare Pages instead (free), or use Neocities Supporter."
+        : "Couldn’t reach Google (network error). Check Wi-Fi, VPN, ad-blocker or school firewall, then try again.\n\n(details: "+raw.replace(/^NETWORK: /,"").slice(0,160)+")";
+      health("hGem","err","Network error");
+    }
+    out.querySelector(".body").textContent=m;
+  }finally{
+    clearTimeout(timer);
+  }
+  if(reqCtl!==ctl) return;
+  reqCtl=null; busy=false; mic.classList.remove("busy");
+  if(answer){ setStatus("speaking"); await speak(answer); }
+  if(reqCtl||rec) return;
+  setStatus(wakeOn?"waiting":"ready");
+  if(wakeOn) startWake();
+}
+$("form").addEventListener("submit",e=>{ e.preventDefault(); const v=$("q").value.trim(); if(v){ $("q").value=""; if(v.split(/\s+/).length>=3) setMicLang(SPEECH[detectLang(v)]); ask(v); } });
+
+// ---------- распознавание речи ----------
+const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+let rec=null, mode=null, wakeOn=false;
+if(!SR){ mic.disabled=true; }
+
+function newRec(continuous){ const r=new SR(); r.lang=$("lang").value; r.interimResults=true; r.continuous=continuous; return r; }
+function stopRec(){ if(rec){ rec.onend=null; try{rec.abort()}catch(e){} rec=null; } mic.classList.remove("listening"); }
+
+function listenOnce(){
+  stopRec(); stopSpeaking(); mode="ask";
+  rec=newRec(false); let finalText="";
+  rec.onstart=()=>{ mic.classList.add("listening"); setStatus("listening"); interim.textContent=t("speak"); };
+  rec.onresult=e=>{ let s=""; for(const res of e.results){ s+=res[0].transcript; if(res.isFinal) finalText=s; } interim.textContent=s; };
+  rec.onerror=e=>{ interim.textContent = (e.error==="not-allowed"||e.error==="service-not-allowed") ? t("denied") : e.error==="no-speech" ? t("noSpeech") : t("micErr")+e.error; };
+  rec.onend=()=>{ mic.classList.remove("listening"); rec=null; if(finalText.trim()){ interim.textContent=""; ask(finalText.trim()); } else { setStatus(wakeOn?"waiting":"ready"); if(wakeOn) startWake(); } };
+  try{ rec.start(); }catch(e){}
+}
+mic.onclick=()=>{ if(!SR) return; if(rec&&mode==="ask"){ rec.stop(); return; } stopSpeaking(); listenOnce(); };
+
+const WAKE=/(qwentity|quentity|kwentity|quantity|qwentit\w*|квентити|квентитя|квантити|кьюэнтити|кви?ентити|quentita|quantità)[\s,.!?]*/i;
+function startWake(){
+  if(!wakeOn||!SR||busy||(rec&&mode==="ask")) return;
+  stopRec(); mode="wake";
+  rec=newRec(true); let fired=false;
+  rec.onresult=e=>{
+    for(let i=e.resultIndex;i<e.results.length;i++){
+      const s=e.results[i][0].transcript, m=s.match(WAKE);
+      if(m&&!fired){
+        const rest=s.slice(m.index+m[0].length).trim();
+        if(e.results[i].isFinal){
+          fired=true; stopRec();
+          if(rest.split(/\s+/).length>=2){ ask(rest); } else { speak(t("yes")).then(listenOnce); }
+          return;
+        } else { interim.textContent="Qwentity… "+rest; }
+      }
+    }
+  };
+  rec.onerror=e=>{ if(e.error==="not-allowed"||e.error==="service-not-allowed"){ wakeOn=false; paintWake(); interim.textContent=t("denied"); } };
+  rec.onend=()=>{ rec=null; if(wakeOn&&!busy&&mode==="wake") setTimeout(startWake,300); };
+  try{ rec.start(); setStatus("waiting"); }catch(e){}
+}
+function paintWake(){ $("wake").setAttribute("aria-pressed",wakeOn); $("wake").textContent=t("wake")+": "+t(wakeOn?"on":"off"); }
+$("wake").onclick=()=>{ if(!SR) return; wakeOn=!wakeOn; paintWake(); if(wakeOn){ interim.textContent=t("wakeHint"); startWake(); } else { stopRec(); setStatus("ready"); interim.textContent=""; } };
+
+applyLang();
+paintMicLang();
+renderChat();
+loadModels();
+let framed=false; try{ framed=window.self!==window.top; }catch(e){ framed=true; }
+if(framed){ addMsg("j err",t("jarvis"),"⚠ Download this file and open it in Google Chrome or Edge. Inside a preview the microphone and the internet are blocked, so Ask can't work here."); }
+</script>
+</body>
+</html>
