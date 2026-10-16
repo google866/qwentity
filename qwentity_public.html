@@ -29,6 +29,8 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-vis
 #settings{display:grid;gap:10px;padding:12px 0;border-bottom:1px solid var(--line)}
 #settings label{font-family:var(--f-mono);font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;display:grid;gap:4px}
 #settings input,#settings textarea,#settings select{width:100%;background:var(--panel);color:var(--fg);border:1px solid var(--line);border-radius:8px;padding:9px;font:inherit;font-size:15px;text-transform:none;letter-spacing:0}
+#settings label.chk{display:flex;align-items:center;gap:8px;text-transform:none;letter-spacing:0;font-family:var(--f-body);font-size:14px;color:var(--fg)}
+#settings input[type=checkbox]{width:18px;height:18px;flex:none;accent-color:var(--core)}
 #settings textarea{min-height:70px;resize:vertical}
 #settings a{color:var(--core)}
 .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
@@ -55,11 +57,49 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-vis
 #interim{min-height:1.5em;color:var(--muted);font-size:15px;text-align:center}
 .text-row{display:flex;gap:8px;width:100%}
 #q{flex:1;min-width:0;background:var(--panel);color:var(--fg);border:1px solid var(--line);border-radius:10px;padding:10px 12px;font:inherit}
+#send.stop{background:var(--warn)}
 #send{background:var(--core);color:var(--bg);border:0;border-radius:10px;padding:10px 14px;font-family:var(--f-display);font-size:13px;cursor:pointer}
 
 .mic-langs{display:flex;gap:4px}
 .mic-langs button{background:none;border:1px solid var(--line);color:var(--muted);border-radius:6px;padding:3px 8px;font-family:var(--f-mono);font-size:11px;cursor:pointer}
 .mic-langs button[aria-pressed="true"]{color:var(--bg);background:var(--core);border-color:var(--core)}
+/* ответы с Markdown */
+.msg .body{display:block}
+.md{white-space:normal}
+.md p{margin:0 0 .55em}
+.md ul,.md ol{margin:.2em 0 .6em;padding-left:1.3em}
+.md li{margin:.15em 0}
+.md h4{margin:.7em 0 .3em;font-family:var(--f-display);font-size:14px;letter-spacing:.03em}
+.md code{font-family:var(--f-mono);font-size:.88em;background:var(--panel);border:1px solid var(--line);border-radius:5px;padding:1px 5px}
+.md .tbl{overflow-x:auto;margin:.4em 0 .7em}
+.md table{border-collapse:collapse;font-size:14px}
+.md th,.md td{border:1px solid var(--line);padding:5px 9px;text-align:left;vertical-align:top}
+.md th{background:var(--panel);font-weight:600}
+.md blockquote{margin:.4em 0;padding-left:10px;border-left:2px solid var(--core-dim);color:var(--muted)}
+.md a{color:var(--core)}
+.md hr{border:0;border-top:1px solid var(--line);margin:.6em 0}
+/* вложения */
+#attachBtn{background:var(--panel);border:1px solid var(--line);color:var(--fg);border-radius:10px;padding:0 12px;font-size:17px;cursor:pointer;flex:none}
+#attachBtn:hover{border-color:var(--core-dim)}
+#tray{display:flex;flex-wrap:wrap;gap:8px;width:100%;padding:4px 0}
+.att{display:flex;align-items:center;gap:6px;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:4px 6px 4px 4px;font-size:12px;color:var(--muted);max-width:220px}
+.att img{width:40px;height:40px;object-fit:cover;border-radius:6px;display:block}
+.att .ic2{width:40px;height:40px;display:grid;place-items:center;font-family:var(--f-mono);font-size:11px;color:var(--core);border:1px solid var(--core-dim);border-radius:6px}
+.att span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.att button{background:none;border:0;color:var(--muted);cursor:pointer;font-size:14px;padding:2px 4px}
+.msg .atts{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.msg .atts img{max-width:160px;max-height:160px;border-radius:8px;display:block}
+body.dragging .app{outline:2px dashed var(--core);outline-offset:-6px}
+/* запуск кода, Wokwi */
+.fv-actions{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.file-view .dl2.alt{background:none;border:1px solid var(--core-dim);color:var(--core)}
+.dl2:disabled{opacity:.5;cursor:default}
+#pyOut{align-self:stretch;margin:6px 0 0;max-height:45vh;overflow:auto;text-align:left;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px 12px;font-family:var(--f-mono);font-size:12.5px;white-space:pre-wrap;color:var(--fg)}
+.file-view{justify-content:flex-start;padding-top:40px;overflow:auto}
+/* экспорт чатов */
+.drawer-foot{display:flex;flex-wrap:wrap;gap:6px;align-items:center;padding:10px 12px;border-top:1px solid var(--line)}
+#importNote{font-size:12px;color:var(--muted);width:100%}
+#teachBtn[aria-pressed="true"]{color:var(--bg);background:var(--core);border-color:var(--core)}
 /* что сейчас работает */
 .trace{display:flex;flex-wrap:wrap;gap:4px 10px;margin-top:6px;font-family:var(--f-mono);font-size:11px;color:var(--muted)}
 .trace .run{color:var(--core)} .trace .ok{color:#6fd39a} .trace .err{color:var(--warn)}
@@ -82,11 +122,31 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-vis
 /* картинки */
 .img-card{display:block;margin:8px 0;padding:0;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--panel);cursor:pointer;max-width:340px;width:100%}
 .img-card img{display:block;width:100%;height:auto;min-height:120px;background:var(--bg)}
+.img-card .ph{width:100%;max-height:420px;background:var(--bg)}
+.img-card .ph.loading{background:linear-gradient(100deg,var(--bg) 30%,var(--user) 50%,var(--bg) 70%);background-size:300% 100%;animation:shimmer 1.6s linear infinite}
+@keyframes shimmer{from{background-position:100% 0}to{background-position:-100% 0}}
+@media (prefers-reduced-motion:reduce){.img-card .ph.loading{animation:none}}
 .img-card .again{background:none;border:1px solid var(--line);color:var(--muted);border-radius:8px;padding:5px 8px;font:inherit;font-size:12px;cursor:pointer;flex:none}
 .img-card .cap{display:flex;gap:8px;align-items:center;padding:8px 10px;font-size:12px;color:var(--muted)}
 .img-card .cap span{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:left}
 .img-view{height:100%;display:flex;align-items:center;justify-content:center;padding:16px}
 .img-view img{max-width:100%;max-height:100%;border-radius:10px}
+.wiki-card{display:flex;gap:14px;align-items:flex-start;margin:4px 0 12px;padding:12px;background:var(--panel);border:1px solid var(--line);border-radius:12px;white-space:normal;max-width:620px}
+.wiki-card .wk-img{flex:none;width:120px;cursor:pointer}
+.wiki-card .wk-img img{width:120px;max-height:160px;object-fit:cover;border-radius:8px;display:block;background:var(--bg)}
+.wiki-card.loading .wk-img{height:120px;border-radius:8px;background:linear-gradient(100deg,var(--bg) 30%,var(--user) 50%,var(--bg) 70%);background-size:300% 100%;animation:shimmer 1.6s linear infinite}
+.wk-tx{min-width:0;display:flex;flex-direction:column;gap:4px}
+.wk-tx strong{font-family:var(--f-display);font-size:16px;letter-spacing:.02em}
+.wk-desc{color:var(--muted);font-size:13px}
+.wk-ex{margin:2px 0 0;font-size:14px;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}
+.wk-links{display:flex;flex-wrap:wrap;gap:12px;font-size:13px}
+.wk-links a{color:var(--core)}
+@media (max-width:520px){.wiki-card{flex-direction:column}.wiki-card .wk-img,.wiki-card .wk-img img{width:100%;max-height:240px}}
+.place-card{margin:8px 0;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--panel);max-width:560px;white-space:normal}
+.place-card iframe{display:block;width:100%;height:240px;border:0;background:var(--bg)}
+.pl-info{display:flex;flex-direction:column;gap:4px;padding:10px 12px}
+.pl-meta{font-family:var(--f-mono);font-size:12px;color:var(--muted)}
+.where-btn{background:var(--core);color:var(--bg);border:0;border-radius:10px;padding:6px 12px;font:inherit;font-size:13px;cursor:pointer;align-self:center}
 .photos{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px;margin:8px 0;max-width:560px}
 .photos button{padding:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--panel);cursor:pointer;display:flex;flex-direction:column}
 .photos img{width:100%;aspect-ratio:1/1;object-fit:cover;display:block;background:var(--bg)}
@@ -136,6 +196,7 @@ body.pane-open .app{margin-right:min(58vw,900px);margin-left:max(0px,calc((100vw
     <span class="health"><span id="hGem" title="Gemini">AI</span><span id="hImg" title="Images">IMG</span></span>
     <button class="btn" id="wake" aria-pressed="false"></button>
     <button class="btn" id="voice" aria-pressed="true"></button>
+    <button class="btn" id="teachBtn" aria-pressed="false"></button>
     <button class="btn" id="setBtn" aria-expanded="false"></button>
   </header>
 
@@ -143,6 +204,15 @@ body.pane-open .app{margin-right:min(58vw,900px);margin-left:max(0px,calc((100vw
     <label for="key"><span><span data-t="keyLabel"></span> <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">aistudio.google.com/apikey</a></span>
       <input id="key" type="password" autocomplete="off" placeholder="AIza… / AQ.…">
     </label>
+    <label class="chk" for="gimg"><input id="gimg" type="checkbox"> <span data-t="gimgLabel"></span></label>
+    <div class="row">
+      <label for="pkey"><span><span data-t="pkeyLabel"></span> <a href="https://enter.pollinations.ai" target="_blank" rel="noopener">enter.pollinations.ai</a></span>
+        <input id="pkey" type="password" autocomplete="off" placeholder="sk_… (optional)">
+      </label>
+      <label for="hkey"><span><span data-t="hkeyLabel"></span> <a href="https://aihorde.net/register" target="_blank" rel="noopener">aihorde.net</a></span>
+        <input id="hkey" type="password" autocomplete="off" placeholder="optional">
+      </label>
+    </div>
     <div class="row">
       <label for="lang"><span data-t="langLabel"></span>
         <select id="lang">
@@ -153,6 +223,21 @@ body.pane-open .app{margin-right:min(58vw,900px);margin-left:max(0px,calc((100vw
           <option value="de-DE">Deutsch</option>
         </select>
       </label>
+      <label for="board"><span data-t="boardLabel"></span>
+        <select id="board">
+          <option value="">Auto</option>
+          <option value="uno">Arduino Uno</option>
+          <option value="nano">Arduino Nano</option>
+          <option value="mega">Arduino Mega</option>
+          <option value="esp32">ESP32</option>
+          <option value="esp8266">ESP8266 (NodeMCU / Wemos)</option>
+          <option value="kniwwelino">Kniwwelino (ESP8266)</option>
+          <option value="pico">Raspberry Pi Pico (MicroPython)</option>
+          <option value="microbit">micro:bit (MicroPython)</option>
+        </select>
+      </label>
+    </div>
+    <div class="row">
       <label for="model"><span data-t="modelLabel"></span>
         <select id="model"><option value="gemini-flash-latest">gemini-flash-latest</option></select>
       </label>
@@ -171,7 +256,10 @@ body.pane-open .app{margin-right:min(58vw,900px);margin-left:max(0px,calc((100vw
       <button type="button" data-l="en-US">EN</button><button type="button" data-l="ru-RU">RU</button><button type="button" data-l="fr-FR">FR</button><button type="button" data-l="de-DE">DE</button><button type="button" data-l="it-IT">IT</button>
     </div>
     <div id="interim"></div>
+    <div id="tray" hidden></div>
     <form class="text-row" id="form">
+      <button id="attachBtn" type="button" title="Attach photo or file">📎</button>
+      <input id="fileIn" type="file" multiple hidden accept="image/*,.pdf,.txt,.md,.py,.ino,.c,.cpp,.h,.hpp,.js,.ts,.html,.css,.json,.csv,.xml,.yml,.yaml,.sh,.log">
       <input id="q">
       <button id="send" type="submit"></button>
     </form>
@@ -183,6 +271,12 @@ body.pane-open .app{margin-right:min(58vw,900px);margin-left:max(0px,calc((100vw
   <div class="drawer-head"><strong id="chatsTitle"></strong><button class="btn" id="drawerClose" aria-label="Close">✕</button></div>
   <button id="newChat2" type="button"></button>
   <div id="chatList"></div>
+  <div class="drawer-foot">
+    <button class="btn" id="exportBtn" type="button"></button>
+    <button class="btn" id="importBtn" type="button"></button>
+    <input id="importFile" type="file" accept=".json,application/json" hidden>
+    <span id="importNote"></span>
+  </div>
 </nav>
 
 <aside id="pane" hidden aria-label="Code">
@@ -205,7 +299,12 @@ body.pane-open .app{margin-right:min(58vw,900px);margin-left:max(0px,calc((100vw
     <div class="fname" id="fvName"></div>
     <div class="fmeta" id="fvMeta"></div>
     <div class="run" id="fvRun"></div>
-    <button class="dl2" id="fvDl" type="button"></button>
+    <div class="fv-actions">
+      <button class="dl2" id="runBtn" type="button" hidden></button>
+      <button class="dl2 alt" id="wokwiBtn" type="button" hidden></button>
+      <button class="dl2 alt" id="fvDl" type="button"></button>
+    </div>
+    <pre id="pyOut" hidden></pre>
   </div></div>
 </aside>
 
@@ -238,7 +337,7 @@ const T={
   wakeHint:"Dis « Qwentity » puis ta question",noSpeech:"Je n’ai rien entendu. Appuie et parle encore.",denied:"Le navigateur bloque le micro. Autorise-le (icône à gauche de l’adresse) et réessaie.",
   micErr:"Erreur de micro : ",noSR:"Ce navigateur ne reconnaît pas la parole. Ouvre le fichier dans Google Chrome ou Microsoft Edge.",
   needKey:"Il faut une clé Gemini. Ouvre « Réglages » et colle-la.",badKey:"La clé ne fonctionne pas. Vérifie-la dans « Réglages ».",quota:"La limite gratuite est atteinte pour l’instant. Attends une minute et réessaie.",offline:"Pas de connexion internet.",empty:"Réponse vide. Essaie de reformuler."},
- en:{again:"Another version",photoSearching:"Searching real photos…",photoNone:"No free photos found — have a look in Google Images.",moreGoogle:"More photos in Google Images",photoSaid:"Here are real photos.",improving:"Checking and improving the code…",improved:"✓ Code checked and improved",errBar:"Error in the program:",fix:"Fix it",fixPrompt:"The file {f} throws an error when it runs: {e}. Find the cause and send the full fixed file.",chats:"Chats",newChat:"+ New chat",untitled:"New chat",imgMaking:"Drawing… (10–30 s)",imgSaid:"The picture is ready.",imgFail:"Couldn’t draw the picture. The free service allows about one picture every 15 seconds — wait a moment and ask again.",prompt:"Prompt",codeTab:"Code",prevTab:"File",runPy:"Run: python ",runIno:"Open it in the Arduino IDE and upload it",runOther:"Download the file and open it in your program",bytes:"bytes",copy:"Copy",copied:"Copied",download:"Download",openCode:"Open code",lines:"lines",codeSaid:"The code is open in the window on the right.",name:"English",title:"QWENTITY",ready:"ready",thinking:"thinking",speaking:"speaking",listening:"listening",waiting:"waiting for “Qwentity”",
+ en:{whereBtn:"Where was this taken?",whereQ:"Where was this photo taken? Find the place.",wikiLoading:"Looking it up on Wikipedia…",place:"Place",confidence:"confidence",runMicro:"MicroPython: copy it to the board with Thonny (or the micro:bit editor) — or try it in Wokwi first.",teacher:"Teacher",boardLabel:"My board (for Arduino code)",attach:"Attach",lookAtThis:"Please look at this and help me.",tooBig:"File too big:",badType:"This file type is not supported:",runBtn:"▶ Run",running:"Running…",pyLoading:"Loading Python in your browser (first time ~10 s)…",pyHw:"This program uses hardware or a window (GPIO, serial, tkinter, pygame…). Download it and run it on your computer or board.",pyFail:"Couldn’t load Python in the browser:",wokwi:"Open in Wokwi",microbitBtn:"Open micro:bit editor",wokwiTip:"Code copied. In Wokwi: replace everything in the code tab and paste (Ctrl+V). If the answer has a diagram.json, paste it into the diagram.json tab too.",esp8266Tip:"Wokwi can’t simulate ESP8266/Kniwwelino. Upload with Arduino IDE (board: “LOLIN(WEMOS) D1 R2 & mini” or NodeMCU 1.0).",diagramTip:"Wokwi wiring: open the Wokwi project, click the diagram.json tab, replace everything and paste this.",exportChats:"⬇ Export chats",importChats:"⬆ Import",imported:"Imported {n} chats.",importBad:"This file is not a Qwentity chat export.",gimgLabel:"Gemini pictures (Nano Banana) — best quality, ~3 cents per picture, needs billing turned on for your Google key",stopBtn:"■ Stop",stopped:"Stopped.",writing:"writing",tapToDraw:"Picture not saved on this device — tap ↻ to draw it again.",pkeyLabel:"Pollinations key (optional, faster pictures):",hkeyLabel:"AI Horde key (optional, shorter queue):",again:"Another version",photoSearching:"Searching real photos…",photoNone:"No free photos found — have a look in Google Images.",moreGoogle:"More photos in Google Images",photoSaid:"Here are real photos.",improving:"Checking and improving the code…",improved:"✓ Code checked and improved",errBar:"Error in the program:",fix:"Fix it",fixPrompt:"The file {f} throws an error when it runs: {e}. Find the cause and send the full fixed file.",chats:"Chats",newChat:"+ New chat",untitled:"New chat",imgMaking:"Drawing… (free services: 10 s – 3 min)",imgSaid:"The picture is ready.",imgFail:"Couldn’t draw the picture. Tap ↻ to try again. Details:",prompt:"Prompt",codeTab:"Code",prevTab:"File",runPy:"Run: python ",runIno:"Open it in the Arduino IDE and upload it",runOther:"Download the file and open it in your program",bytes:"bytes",copy:"Copy",copied:"Copied",download:"Download",openCode:"Open code",lines:"lines",codeSaid:"The code is open in the window on the right.",name:"English",title:"QWENTITY",ready:"ready",writing:"writing",thinking:"thinking",speaking:"speaking",listening:"listening",waiting:"waiting for “Qwentity”",
   wake:"“Qwentity”",on:"on",off:"off",voice:"Voice",settings:"Settings",wakeTip:"Keep listening for the word “Qwentity”",
   keyLabel:"Gemini API key (free):",langLabel:"Microphone language (I reply in the language you use)",modelLabel:"Model",aboutLabel:"Who we are (Qwentity will take this into account)",
   aboutPh:"For example: we are a makerspace in Luxembourg working with teens aged 12–15; we have laser cutters, 3D printers, a plotter and a podcast studio.",
@@ -286,7 +385,8 @@ function detectLang(s){
 }
 const SPEECH={en:"en-US",ru:"ru-RU",fr:"fr-FR",de:"de-DE",it:"it-IT"};
 let statusKey="ready";
-function setStatus(k){ statusKey=k; statusEl.textContent=t(k); }
+function setStatus(k){ statusKey=k; statusEl.textContent=t(k)||k; paintSend(); }
+function paintSend(){ const b=$("send"); if(!b) return; const stopMode=(busy||statusKey==="speaking")&&!$("q").value.trim()&&!(typeof pending!=="undefined"&&pending.length); b.textContent=stopMode?t("stopBtn"):t("send"); b.classList.toggle("stop",stopMode); }
 function applyLang(){
   document.documentElement.lang=L();
   document.title="Qwentity";
@@ -297,13 +397,15 @@ function applyLang(){
   mic.setAttribute("aria-label",t("mic"));
   $("setBtn").textContent=t("settings");
   $("wake").title=t("wakeTip");
-  paintVoice(); paintWake(); paintPane(); paintChats(); setStatus(statusKey);
+  paintVoice(); paintWake(); paintPane(); paintChats(); paintTeach(); setStatus(statusKey);
   if(!SR){ interim.textContent=t("noSR"); }
 }
 
 // ---------- настройки ----------
 if(!S.get("jv-lang-v2")){ S.set("jv-lang","en-US"); S.set("jv-lang-v2","1"); }
-["key","lang","about"].forEach(id=>{ const v=S.get("jv-"+id); if(v!==null) $(id).value=v; $(id).addEventListener("input",()=>S.set("jv-"+id,$(id).value)); $(id).addEventListener("change",()=>S.set("jv-"+id,$(id).value)); });
+try{ $("gimg").checked=S.get("jv-gimg")==="on"; }catch(e){}
+$("gimg").addEventListener("change",()=>S.set("jv-gimg",$("gimg").checked?"on":"off"));
+["key","lang","about","pkey","hkey","board"].forEach(id=>{ const v=S.get("jv-"+id); if(v!==null) $(id).value=v; $(id).addEventListener("input",()=>S.set("jv-"+id,$(id).value)); $(id).addEventListener("change",()=>S.set("jv-"+id,$(id).value)); });
 $("model").addEventListener("change",()=>S.set("jv-model",$("model").value));
 $("setBtn").onclick=()=>{ const s=$("settings"); s.hidden=!s.hidden; $("setBtn").setAttribute("aria-expanded",!s.hidden); };
 if(!$("key").value.trim()) $("key").value=DEFAULT_KEY;
@@ -341,6 +443,8 @@ function speak(text){
   return new Promise(res=>{
     if(!voiceOn||!window.speechSynthesis) return res();
     speechSynthesis.cancel();
+    text=text.replace(/^\s*\|?\s*:?-{2,}.*$/gm,"").replace(/^\s*(---|\*\*\*)\s*$/gm,"");
+    text=text.replace(/```(wiki|place)[\s\S]*?(```|$)/g," ");
     const clean=text.replace(/```photo[\s\S]*?(```|$)/g," "+t("photoSaid")+" ").replace(/```image[\s\S]*?(```|$)/g," "+t("imgSaid")+" ").replace(/```[\s\S]*?(```|$)/g," "+t("codeSaid")+" ").replace(/https?:\/\/\S+/g,"").replace(/\[(.*?)\]\(.*?\)/g,"$1").replace(/[*#`_>|]/g,"");
     const parts=(clean.match(/[^.!?…\n]+[.!?…]*\s*/g)||[clean]).reduce((acc,s)=>{ const last=acc[acc.length-1]; if(last&&(last+s).length<180) acc[acc.length-1]=last+s; else acc.push(s); return acc; },[]).map(s=>s.trim()).filter(Boolean);
     const short=detectLang(clean), full=SPEECH[short]||"en-US";
@@ -367,18 +471,22 @@ let busy=false; let reqCtl=null;
 // ---------- чаты (сохраняются в браузере) ----------
 let chats=[]; try{ chats=JSON.parse(S.get("jv-chats")||"[]"); }catch(e){ chats=[]; }
 let curId=S.get("jv-cur");
-function saveChats(){ S.set("jv-chats",JSON.stringify(chats.slice(0,100))); S.set("jv-cur",curId||""); }
+// В браузер сохраняем чаты без тяжёлых вложений (фото/PDF), только их названия
+function stripChats(){ return chats.slice(0,100).map(c=>({id:c.id,title:c.title,updated:c.updated,turns:c.turns.map(tr=>{ const o={role:tr.role,parts:tr.parts.map(p=>p.inlineData?{text:"[📎 "+(p._name||"file")+"]"}:{text:p.text||""})}; if(tr._display) o._display=tr._display; return o; })})); }
+function saveChats(){ S.set("jv-chats",JSON.stringify(stripChats())); S.set("jv-cur",curId||""); }
 function cur(){ let c=chats.find(c=>c.id===curId); if(!c){ c={id:String(Date.now()),title:"",updated:Date.now(),turns:[]}; chats.unshift(c); curId=c.id; } return c; }
-function apiTurns(){ let tt=cur().turns.slice(-20); while(tt.length&&tt[0].role!=="user") tt=tt.slice(1); return tt; }
+function apiTurns(){ let tt=cur().turns.slice(-20); while(tt.length&&tt[0].role!=="user") tt=tt.slice(1);
+  return tt.map(tr=>({role:tr.role,parts:tr.parts.map(p=>p.inlineData?{inlineData:{mimeType:p.inlineData.mimeType,data:p.inlineData.data}}:{text:p.text||""})})); }
 function introMsg(){ addMsg("j intro",t("jarvis"),t("intro")); }
 function renderChat(){
   log.textContent="";
   const c=cur();
   if(!c.turns.length) introMsg();
+  let lastUser="";
   for(const tr of c.turns){
     const text=tr.parts.map(p=>p.text||"").join("");
-    if(tr.role==="user") addMsg("u",t("you"),text);
-    else { const el=addMsg("j",t("jarvis"),""); renderAnswer(el.querySelector(".body"),text,false); }
+    if(tr.role==="user"){ lastUser=tr._display||text; addMsg("u",t("you"),lastUser); }
+    else { const el=addMsg("j",t("jarvis"),""); renderAnswer(el.querySelector(".body"),text,false,lastUser); }
   }
   log.scrollTop=log.scrollHeight;
   renderList();
@@ -420,14 +528,18 @@ const photoCache={};
 async function searchPhotos(q){
   if(photoCache[q]) return photoCache[q];
   const out=[];
+  const qs=[q]; const wq=q.split(/\s+/); if(wq.length>3) qs.push(wq.slice(0,3).join(" ")); if(wq.length>2) qs.push(wq.slice(0,2).join(" "));
+  for(const qq of qs){ if(out.length>=4) break;
   try{
-    const u="https://commons.wikimedia.org/w/api.php?action=query&format=json&origin=*&generator=search&gsrnamespace=6&gsrlimit=8&prop=imageinfo&iiprop=url|extmetadata&iiurlwidth=800&gsrsearch="+encodeURIComponent(q+" filetype:bitmap");
+    const u="https://commons.wikimedia.org/w/api.php?action=query&format=json&origin=*&generator=search&gsrnamespace=6&gsrlimit=8&prop=imageinfo&iiprop=url|extmetadata&iiurlwidth=800&gsrsearch="+encodeURIComponent(qq+" filetype:bitmap");
     const j=await (await fetch(u)).json();
     Object.values((j.query&&j.query.pages)||{}).sort((a,b)=>(a.index||0)-(b.index||0)).forEach(pg=>{
       const ii=(pg.imageinfo||[])[0]; if(!ii) return;
+      if(out.some(o=>o.page===ii.descriptionurl)) return;
       out.push({thumb:ii.thumburl||ii.url,full:ii.thumburl||ii.url,page:ii.descriptionurl,source:"Wikimedia Commons",title:(pg.title||"").replace(/^File:/,"").replace(/\.\w+$/,"")});
     });
   }catch(e){}
+  }
   if(out.length<4){
     try{
       const j=await (await fetch("https://api.openverse.org/v1/images/?page_size=8&q="+encodeURIComponent(q))).json();
@@ -456,12 +568,152 @@ function renderPhotos(el,q){
     });
   });
 }
-const SIZES={square:[1024,1024],wide:[1344,768],tall:[768,1344]};
-function imageUrl(prompt,seed,size){ const [w,hh]=SIZES[size]||SIZES.square; return "https://image.pollinations.ai/prompt/"+encodeURIComponent(prompt.slice(0,900))+"?width="+w+"&height="+hh+"&nologo=true&model=flux&seed="+seed; }
+// ---------- генерация картинок: несколько бесплатных сервисов по очереди ----------
+const IMG_SIZES={square:[1024,1024],wide:[1344,768],tall:[768,1344]};
+const HORDE_SIZES={square:[1024,1024],wide:[1216,704],tall:[704,1216]};
+const HORDE="https://aihorde.net/api/v2";
+// кэш готовых картинок в браузере (IndexedDB), чтобы они не пропадали после перезагрузки
+const imgDB=(()=>{ let pr=null;
+  const open=()=>pr||(pr=new Promise((res,rej)=>{ try{ const r=indexedDB.open("qwentity-img",1); r.onupgradeneeded=()=>r.result.createObjectStore("img"); r.onsuccess=()=>res(r.result); r.onerror=()=>rej(r.error); }catch(e){ rej(e); } }));
+  return {
+    async get(k){ try{ const db=await open(); return await new Promise(res=>{ const q=db.transaction("img").objectStore("img").get(k); q.onsuccess=()=>res(q.result||null); q.onerror=()=>res(null); }); }catch(e){ return null; } },
+    async put(k,v){ try{ const db=await open(); db.transaction("img","readwrite").objectStore("img").put(v,k); }catch(e){} }
+  }; })();
+function imgKey(p){ return p.seed+"|"+p.size+"|"+p.prompt.slice(0,300); }
+function sleep(ms,signal){ return new Promise((res,rej)=>{ const tm=setTimeout(res,ms); if(signal) signal.addEventListener("abort",()=>{ clearTimeout(tm); rej(new Error("cancelled")); },{once:true}); }); }
+async function widthOf(blob){ try{ const b=await createImageBitmap(blob); const w=b.width; b.close&&b.close(); return w; }catch(e){ return 0; } }
+// без CORS: просто ждём, загрузится ли <img>; проверяем размер, чтобы не принять «заглушку»
+function loadViaImg(url, w, timeout){
+  return new Promise((res,rej)=>{ const im=new Image(); im.referrerPolicy="no-referrer";
+    const tm=setTimeout(()=>{ im.src=""; rej(new Error("timeout")); },timeout);
+    im.onload=()=>{ clearTimeout(tm); if(w&&Math.abs(im.naturalWidth-w)>64) rej(new Error("got a placeholder, not a picture")); else res(url); };
+    im.onerror=()=>{ clearTimeout(tm); rej(new Error("failed to load")); };
+    im.src=url; });
+}
+async function fetchBlob(url, opts, timeout, w){
+  const c=new AbortController(); const tm=setTimeout(()=>c.abort(),timeout);
+  try{
+    const r=await fetch(url,Object.assign({},opts,{signal:c.signal}));
+    if(!r.ok){ let msg=""; try{ msg=(await r.text()).replace(/\s+/g," ").slice(0,100); }catch(e){} throw new Error("HTTP "+r.status+(msg?" "+msg:"")); }
+    const b=await r.blob();
+    if(!/^image\//.test(b.type)) throw new Error("not an image");
+    if(w){ const bw=await widthOf(b); if(bw&&Math.abs(bw-w)>64) throw new Error("got a placeholder, not a picture"); }
+    return b;
+  }catch(e){ if(c.signal.aborted) throw new Error("timeout"); throw e; }
+  finally{ clearTimeout(tm); }
+}
+let gImgModels=null;
+async function geminiImageModels(key){
+  if(gImgModels) return gImgModels;
+  let names=[];
+  try{ const r=await fetch(API+"/models?pageSize=200",{headers:{"x-goog-api-key":key}}); const j=await r.json();
+    names=(j.models||[]).filter(m=>(m.supportedGenerationMethods||[]).includes("generateContent")).map(m=>m.name.replace("models/","")).filter(n=>/image/.test(n)&&!/imagen|tts|edit/.test(n)); }catch(e){}
+  const score=n=>(/flash/.test(n)?50:0)+(/lite/.test(n)?10:0)-(/pro/.test(n)?30:0)+(/preview/.test(n)?-5:0)+(parseFloat((n.match(/gemini-(\d+(\.\d+)?)/)||[0,0])[1])||0);
+  names.sort((a,b)=>score(b)-score(a));
+  if(!names.length) names=["gemini-3.1-flash-lite-image","gemini-3.1-flash-image","gemini-2.5-flash-image"];
+  return gImgModels=names.slice(0,4);
+}
+const IMG_PROVIDERS={
+  // 0) Gemini «Nano Banana» — надёжно и красиво, но платно (~3 цента), нужен billing на ключе
+  geminiImg:{ label:"Gemini (Nano Banana)", when:()=>$("gimg").checked&&!!$("key").value.trim(),
+    async run(p,info,signal){
+      const key=$("key").value.trim(); let last="";
+      const shape=p.size==="wide"?" Wide 16:9 landscape format.":p.size==="tall"?" Tall 9:16 portrait format.":" Square format.";
+      for(const m of await geminiImageModels(key)){
+        info(m);
+        const r=await fetch(API+"/models/"+encodeURIComponent(m)+":generateContent",{method:"POST",signal,headers:{"Content-Type":"application/json","x-goog-api-key":key},
+          body:JSON.stringify({contents:[{role:"user",parts:[{text:"Generate an image: "+p.prompt+shape}]}],generationConfig:{responseModalities:["TEXT","IMAGE"]}})});
+        const j=await r.json().catch(()=>({}));
+        if(!r.ok){ const msg=(j.error&&j.error.message)||""; last=m+": "+r.status+(r.status===429&&/limit: ?0|free/i.test(msg)?" (needs billing on your Google key)":" "+msg.slice(0,60)); if(r.status===400&&/API key/i.test(msg)) break; continue; }
+        const parts=(((j.candidates||[])[0]||{}).content||{}).parts||[];
+        const im=parts.find(x=>x.inlineData||x.inline_data);
+        if(!im){ last=m+": no image (maybe blocked by safety filter)"; continue; }
+        const d=im.inlineData||im.inline_data;
+        return {blob:await (await fetch("data:"+(d.mimeType||d.mime_type||"image/png")+";base64,"+d.data)).blob()};
+      }
+      throw new Error(last||"no Gemini image model");
+    } },
+  // 1) Pollinations со своим ключом (enter.pollinations.ai) — быстрее и лучше
+  pollinationsKey:{ label:"Pollinations (your key)", when:()=>!!$("pkey").value.trim(),
+    async run(p){ const [w,hh]=IMG_SIZES[p.size]||IMG_SIZES.square, k=$("pkey").value.trim();
+      const url="https://gen.pollinations.ai/image/"+encodeURIComponent(p.prompt.slice(0,900))+"?model=flux&width="+w+"&height="+hh+"&seed="+p.seed+"&nologo=true";
+      try{ return {blob:await fetchBlob(url,{headers:{Authorization:"Bearer "+k}},120000)}; }
+      catch(e){ if(/HTTP|timeout/.test(e.message)) throw e; return {url:await loadViaImg(url+"&key="+encodeURIComponent(k),0,120000)}; } } },
+  // 2) старый бесплатный адрес Pollinations (без ключа; может не работать)
+  pollinations:{ label:"Pollinations (free)", when:()=>true,
+    async run(p){ const [w,hh]=IMG_SIZES[p.size]||IMG_SIZES.square;
+      const url="https://image.pollinations.ai/prompt/"+encodeURIComponent(p.prompt.slice(0,900))+"?width="+w+"&height="+hh+"&nologo=true&model=flux&seed="+p.seed;
+      try{ return {blob:await fetchBlob(url,{},60000,w)}; }
+      catch(e){ if(/HTTP|timeout|placeholder/.test(e.message)) throw e; return {url:await loadViaImg(url,w,60000)}; } } },
+  // 3) AI Horde — бесплатная сеть добровольцев, без ключа (бывает очередь)
+  horde:{ label:"AI Horde (free)", when:()=>true,
+    async run(p,info,signal){
+      const [w,hh]=HORDE_SIZES[p.size]||HORDE_SIZES.square, CA="Qwentity:1.1:base1";
+      const H={"Content-Type":"application/json","apikey":($("hkey").value.trim()||"0000000000"),"Client-Agent":CA};
+      const body={prompt:p.prompt+" ### text, watermark, signature, blurry, deformed, ugly, low quality",
+        params:{width:w,height:hh,steps:20,n:1,sampler_name:"k_euler_a",cfg_scale:6,karras:true,seed:String(p.seed)},
+        nsfw:false,censor_nsfw:true,trusted_workers:false,slow_workers:true,r2:true,shared:false,
+        models:["AlbedoBase XL (SDXL)","Juggernaut XL","DreamShaper XL","Flux.1-Schnell fp8 (Compact)"]};
+      const submit=async b=>{ const r=await fetch(HORDE+"/generate/async",{method:"POST",headers:H,body:JSON.stringify(b),signal}); const j=await r.json().catch(()=>({})); return {r,j}; };
+      let {r,j}=await submit(body);
+      if(!j.id){ delete body.models; body.params.width=body.params.height=512; ({r,j}=await submit(body)); }   // запасной вариант: любая модель, меньше размер
+      if(!j.id) throw new Error("HTTP "+r.status+" "+String(j.message||"").slice(0,100));
+      let id=j.id, t0=Date.now(), light=!body.models;
+      const G={headers:{"Client-Agent":CA},signal};
+      const cancel=x=>fetch(HORDE+"/generate/status/"+x,{method:"DELETE",headers:{"Client-Agent":CA}}).catch(()=>{});
+      for(;;){
+        await sleep(3000,signal);
+        const c=await (await fetch(HORDE+"/generate/check/"+id,G)).json().catch(()=>({}));
+        if(c.faulted) throw new Error("worker failed");
+        if(c.is_possible===false) throw new Error("no free worker can do this right now");
+        if(c.done) break;
+        const wait=+c.wait_time||0;
+        // длинная очередь для больших моделей — пробуем лёгкую быструю модель
+        if(!light&&wait>150){
+          cancel(id); light=true; info("queue ~"+Math.round(wait/60)+" min → trying a lighter, faster model");
+          const LS={square:[512,512],wide:[768,448],tall:[448,768]}[p.size]||[512,512];
+          delete body.models; body.params.width=LS[0]; body.params.height=LS[1];
+          ({r,j}=await submit(body)); if(!j.id) throw new Error("HTTP "+r.status+" "+String(j.message||"").slice(0,80));
+          id=j.id; t0=Date.now(); continue;
+        }
+        if(light&&wait>360){ cancel(id); throw new Error("too busy right now (queue ~"+Math.round(wait/60)+" min)"); }
+        if(Date.now()-t0>300000){ cancel(id); throw new Error("too slow (5 min)"); }
+        info(c.queue_position>0 ? "queue #"+c.queue_position+", ~"+(wait||"?")+"s" : "drawing, ~"+(wait||"?")+"s");
+      }
+      const s=await (await fetch(HORDE+"/generate/status/"+id,G)).json().catch(()=>({}));
+      const g=(s.generations||[])[0];
+      if(!g||!g.img) throw new Error("empty result");
+      if(g.censored) throw new Error("blocked by the safety filter");
+      if(!/^https?:/.test(g.img)) return {blob:await (await fetch("data:image/webp;base64,"+g.img)).blob()};
+      try{ return {blob:await fetchBlob(g.img,{},30000)}; }catch(e){ return {url:g.img}; }
+    } }
+};
+async function makeImage(p, box){
+  const k=imgKey(p);
+  const cached=await imgDB.get(k);
+  if(cached&&cached.blob) return {src:URL.createObjectURL(cached.blob),provider:cached.provider};
+  let order=["geminiImg","pollinationsKey","pollinations","horde"].filter(n=>IMG_PROVIDERS[n].when());
+  const pref=S.get("jv-imgprov");      // сначала тот сервис, который сработал в прошлый раз
+  if(pref&&!/geminiImg|pollinationsKey/.test(pref)&&order.includes(pref)&&!$("pkey").value.trim()&&!$("gimg").checked) order=[pref,...order.filter(n=>n!==pref)];
+  const errs=[];
+  for(const name of order){
+    const prov=IMG_PROVIDERS[name], st=step("picture · "+prov.label, box);
+    try{
+      const r=await prov.run(p, d=>st.info(d));
+      st.done(); S.set("jv-imgprov",name);
+      if(r.blob){ imgDB.put(k,{blob:r.blob,provider:prov.label}); return {src:URL.createObjectURL(r.blob),provider:prov.label}; }
+      return {src:r.url,provider:prov.label};
+    }catch(e){ const m=String((e&&e.message)||e).slice(0,90); st.fail(m); errs.push(prov.label+": "+m); }
+  }
+  const hint=($("gimg").checked||$("pkey").value.trim())?"":" — Free picture services are overloaded. For reliable pictures open Settings: turn on “Gemini pictures” or add a Pollinations key.";
+  throw new Error(errs.join(" · ")+hint);
+}
 function addSeeds(text){ return text.replace(/```image[^\S\n]*([^\n]*)\n/g,(m,info)=>/seed=\d+/.test(info)?m:"```image "+(info.match(/size=\w+/)||[""])[0]+" seed="+Math.floor(Math.random()*1e9)+"\n"); }
+const imgJobs={};
+function getImage(p,box){ const k=imgKey(p); return imgJobs[k]||(imgJobs[k]=makeImage(p,box).catch(e=>{ delete imgJobs[k]; throw e; })); }
 async function downloadImage(c){
   try{ const r=await fetch(c.url); const b=await r.blob(); const a=document.createElement("a"); a.href=URL.createObjectURL(b); a.download=c.name; document.body.append(a); a.click(); setTimeout(()=>{URL.revokeObjectURL(a.href); a.remove();},1000); }
-  catch(e){ window.open(c.url,"_blank","noopener"); }
+  catch(e){ if(c.url) window.open(c.url,"_blank","noopener"); }
 }
 // ---------- окно кода ----------
 const EXT={python:"py",py:"py",javascript:"js",js:"js",typescript:"ts",html:"html",css:"css",json:"json",cpp:"ino",arduino:"ino",c:"c",java:"java",bash:"sh",sh:"sh",shell:"sh",sql:"sql",svg:"svg",xml:"xml",markdown:"md",md:"md",micropython:"py",yaml:"yml",csharp:"cs",cs:"cs",go:"go",rust:"rs",lua:"lua"};
@@ -470,46 +722,214 @@ function splitAnswer(text){
   const parts=[]; const re=/```([\w+#.-]*)[ \t]*([^\n]*)\n([\s\S]*?)(```|$)/g; let last=0,m;
   while((m=re.exec(text))){ if(m.index>last) parts.push({type:"text",text:text.slice(last,m.index)}); { const lang=(m[1]||"text").toLowerCase();
     if(lang==="photo"){ parts.push({type:"photo",query:m[3].trim().split("\n")[0]}); last=re.lastIndex; continue; }
-    if(lang==="image"){ const seed=((m[2].match(/seed=(\d+)/)||[])[1])||"1"; const size=((m[2].match(/size=(square|wide|tall)/)||[])[1])||"square"; const pr=m[3].trim().replace(/\s+/g," "); parts.push({type:"image",lang:"image",prompt:pr,code:pr,seed,size,url:imageUrl(pr,seed,size),name:"qwentity-"+seed+".jpg"}); last=re.lastIndex; continue; }
+    if(lang==="wiki"){ const ln=m[3].trim().split("\n"), tt=ln[0].replace(/^["']|["']$/g,"").trim(); if(tt) parts.push({type:"wiki",title:tt,ctx:(ln[1]||"").replace(/^context:\s*/i,"").trim()}); last=re.lastIndex; continue; }
+    if(lang==="place"){ const pl=parsePlace(m[3]); if(pl) parts.push(Object.assign({type:"place"},pl)); last=re.lastIndex; continue; }
+    if(lang==="image"){ const seed=((m[2].match(/seed=(\d+)/)||[])[1])||"1"; const size=((m[2].match(/size=(square|wide|tall)/)||[])[1])||"square"; const pr=m[3].trim().replace(/\s+/g," "); parts.push({type:"image",lang:"image",prompt:pr,code:pr,seed,size,url:"",name:"qwentity-"+seed+".jpg"}); last=re.lastIndex; continue; }
     const nm=(m[2].match(/[\w.-]+\.[a-z0-9]{1,5}/i)||[])[0]; parts.push({type:"code",lang,code:m[3].replace(/\n$/,""),name:nm||("qwentity."+(EXT[lang]||"txt"))}); } last=re.lastIndex; }
   if(last<text.length) parts.push({type:"text",text:text.slice(last)});
   return parts;
 }
 function canPreview(c){ return ["html","svg","xml"].includes(c.lang)&&/<(html|body|div|svg|canvas|script|h1|p)\b/i.test(c.code) || (c.lang==="html"); }
-function renderAnswer(el, text, autoOpen=true){
+// ---------- безопасный Markdown → HTML ----------
+function esc(s){ return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+function inlineMd(s){
+  s=esc(s);
+  s=s.replace(/`([^`]+)`/g,"<code>$1</code>");
+  s=s.replace(/\*\*([^*]+)\*\*/g,"<strong>$1</strong>");
+  s=s.replace(/(^|[^*\w])\*([^*\n]+)\*(?!\w)/g,"$1<em>$2</em>");
+  s=s.replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g,'<a href="$2" target="_blank" rel="noopener">$1</a>');
+  return s;
+}
+function mdToHtml(src){
+  const L=String(src).replace(/\r/g,"").split("\n"); let out="", i=0;
+  const isSep=l=>/^\s*\|?\s*:?-{2,}:?\s*(\|\s*:?-{2,}:?\s*)*\|?\s*$/.test(l||"");
+  const cells=l=>l.trim().replace(/^\||\|$/g,"").split("|").map(c=>inlineMd(c.trim()));
+  const BLOCK=/^(#{1,4}\s|\s*[-*•]\s+|\s*\d+[.)]\s+|>|\s*(---|\*\*\*)\s*$)/;
+  while(i<L.length){
+    const l=L[i]; let m;
+    if(!l.trim()){ i++; continue; }
+    if((m=l.match(/^(#{1,4})\s+(.*)/))){ out+="<h4>"+inlineMd(m[2])+"</h4>"; i++; continue; }
+    if(/^\s*(---|\*\*\*)\s*$/.test(l)){ out+="<hr>"; i++; continue; }
+    if(l.includes("|")&&isSep(L[i+1])){
+      const head=cells(l); i+=2; let rows="";
+      while(i<L.length&&L[i].includes("|")&&L[i].trim()){ rows+="<tr>"+cells(L[i]).map(c=>"<td>"+c+"</td>").join("")+"</tr>"; i++; }
+      out+='<div class="tbl"><table><thead><tr>'+head.map(c=>"<th>"+c+"</th>").join("")+"</tr></thead><tbody>"+rows+"</tbody></table></div>"; continue;
+    }
+    if(/^\s*[-*•]\s+/.test(l)){ let it=""; while(i<L.length&&/^\s*[-*•]\s+/.test(L[i])){ it+="<li>"+inlineMd(L[i].replace(/^\s*[-*•]\s+/,""))+"</li>"; i++; } out+="<ul>"+it+"</ul>"; continue; }
+    if(/^\s*\d+[.)]\s+/.test(l)){ const st=parseInt(l,10)||1; let it=""; while(i<L.length&&/^\s*\d+[.)]\s+/.test(L[i])){ it+="<li>"+inlineMd(L[i].replace(/^\s*\d+[.)]\s+/,""))+"</li>"; i++; } out+='<ol start="'+st+'">'+it+"</ol>"; continue; }
+    if(/^>/.test(l)){ let q=""; while(i<L.length&&/^>/.test(L[i])){ q+=inlineMd(L[i].replace(/^>\s?/,""))+"<br>"; i++; } out+="<blockquote>"+q+"</blockquote>"; continue; }
+    const para=[];
+    while(i<L.length&&L[i].trim()&&!BLOCK.test(L[i])&&!(L[i].includes("|")&&isSep(L[i+1]))){ para.push(inlineMd(L[i])); i++; }
+    if(!para.length){ para.push(inlineMd(L[i])); i++; }
+    out+="<p>"+para.join("<br>")+"</p>";
+  }
+  return out;
+}
+// ---------- карточка из Википедии: фото + короткое описание ----------
+const wikiCache={};
+const normW=s=>String(s||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase();
+const STOPW=new Set("what which where when show tell about please there this that with from have photo picture image look looks like does show give know more some kind thing".split(" ").concat("кто такой такая такие что такое покажи расскажи пожалуйста какой какая выглядит фото картинку".split(" ")));
+const wordsW=s=>normW(s).split(/[^a-z0-9а-яё]+/).filter(w=>w.length>=4&&!STOPW.has(w));
+const compactW=s=>normW(s).replace(/[^a-z0-9а-яё]/g,"");
+// насколько статья подходит к запросу (название от модели + контекст + сам вопрос)
+function wikiScore(target, title, text){
+  const hay=normW(title+" "+text), hayC=compactW(title+" "+text);
+  let sc=0; for(const w of new Set(wordsW(target))) if(hay.includes(w)||hayC.includes(w)) sc++;
+  for(const w of new Set(normW(target).split(/\s+/))){ const c=compactW(w); if(c.length>=6&&hayC.includes(c)) sc+=2; }
+  return sc;
+}
+async function wikiSummary(title, context, question){
+  const key=title+"|"+context+"|"+question;
+  if(key in wikiCache) return wikiCache[key];
+  const W=/[а-яё]/i.test(title)?"ru":"en", target=title+" "+(context||"")+" "+(question||""), tC=compactW(title);
+  const get=async tt=>{ try{ const r=await fetch("https://"+W+".wikipedia.org/api/rest_v1/page/summary/"+encodeURIComponent(tt.trim().replace(/ /g,"_"))+"?redirect=true"); if(!r.ok) return null; const j=await r.json(); return (j.type==="disambiguation"||!j.title)?null:j; }catch(e){ return null; } };
+  const ok=j=>{ if(!j) return false; const txt=j.title+" "+(j.description||"")+" "+(j.extract||"");
+    return normW(j.title)===normW(title) || (tC.length>=5&&compactW(txt).includes(tC)) || wikiScore(target,j.title,txt)>=2; };
+  // 1) точное название
+  let j=await get(title);
+  if(!ok(j)){
+    j=null;
+    // 2) поиск: несколько вариантов, выбираем самый подходящий, а не первый попавшийся
+    try{
+      const q=(title+" "+(context||"")).trim().slice(0,200);
+      const s=await (await fetch("https://"+W+".wikipedia.org/w/api.php?action=query&list=search&srlimit=6&srprop=snippet&format=json&origin=*&srsearch="+encodeURIComponent(q))).json();
+      const hits=((s.query&&s.query.search)||[]).map(x=>{ const sn=String(x.snippet||"").replace(/<[^>]+>/g,""); return {title:x.title,sc:wikiScore(target,x.title,sn)+(tC.length>=5&&compactW(x.title+" "+sn).includes(tC)?2:0)}; }).sort((a,b)=>b.sc-a.sc);
+      for(const hit of hits.slice(0,3)){ if(hit.sc<2) break; const cand=await get(hit.title); if(ok(cand)){ j=cand; break; } }
+    }catch(e){}
+  }
+  return wikiCache[key]=j;   // лучше без карточки, чем с неправильной
+}
+function wikiCard(title, context, question){
+  const c=document.createElement("div"); c.className="wiki-card loading";
+  const ph=document.createElement("div"); ph.className="wk-img"; c.append(ph);
+  const tx=document.createElement("div"); tx.className="wk-tx";
+  const h=document.createElement("strong"); h.textContent=title; const d=document.createElement("span"); d.className="wk-desc"; d.textContent=t("wikiLoading");
+  tx.append(h,d); c.append(tx);
+  wikiSummary(title, context||"", question||"").then(j=>{
+    c.classList.remove("loading");
+    if(!j){ c.remove(); return; }
+    h.textContent=j.title; d.textContent=j.description||"";
+    const ex=document.createElement("p"); ex.className="wk-ex"; ex.textContent=(j.extract||"").slice(0,280); tx.append(ex);
+    const links=document.createElement("div"); links.className="wk-links";
+    const a1=document.createElement("a"); a1.href=(j.content_urls&&j.content_urls.desktop&&j.content_urls.desktop.page)||("https://en.wikipedia.org/wiki/"+encodeURIComponent(j.title)); a1.target="_blank"; a1.rel="noopener"; a1.textContent="Wikipedia ↗";
+    const a2=document.createElement("a"); a2.href="https://www.google.com/search?tbm=isch&q="+encodeURIComponent(j.title); a2.target="_blank"; a2.rel="noopener"; a2.textContent=t("moreGoogle")+" ↗";
+    links.append(a1,a2); tx.append(links);
+    const src=(j.thumbnail&&j.thumbnail.source)||"", big=(j.originalimage&&j.originalimage.source)||src;
+    if(src){ const im=document.createElement("img"); im.src=src; im.alt=j.title; im.referrerPolicy="no-referrer"; im.onerror=()=>ph.remove(); ph.append(im);
+      ph.setAttribute("role","button"); ph.tabIndex=0;
+      const open=()=>openPane({type:"image",lang:"photo",url:big,prompt:j.title,code:j.title+"\n"+a1.href,name:j.title.replace(/[^\w.-]+/g,"_")+".jpg"});
+      ph.onclick=open; ph.onkeydown=e=>{ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); open(); } };
+    } else ph.remove();
+  });
+  return c;
+}
+// ---------- место на карте ----------
+function parsePlace(s){
+  const line=String(s).trim().split("\n")[0], seg=line.split("|").map(x=>x.trim());
+  const m=(seg[0]||"").match(/(-?\d{1,2}(?:\.\d+)?)\s*[,; ]\s*(-?\d{1,3}(?:\.\d+)?)/);
+  if(!m) return null; const lat=+m[1], lon=+m[2];
+  if(!(Math.abs(lat)<=90&&Math.abs(lon)<=180)) return null;
+  return {lat,lon,name:seg[1]||"",conf:(seg[2]||"").toLowerCase(),src:seg[3]||""};
+}
+function placeCard(p){
+  const c=document.createElement("div"); c.className="place-card";
+  const d=0.012, bbox=[p.lon-d*1.6,p.lat-d,p.lon+d*1.6,p.lat+d].map(v=>v.toFixed(5)).join(",");
+  const fr=document.createElement("iframe"); fr.title="Map"; fr.loading="lazy"; fr.referrerPolicy="no-referrer";
+  fr.src="https://www.openstreetmap.org/export/embed.html?bbox="+bbox+"&layer=mapnik&marker="+p.lat+","+p.lon;
+  const info=document.createElement("div"); info.className="pl-info";
+  const nm=document.createElement("strong"); nm.textContent="📍 "+(p.name||t("place"));
+  const meta=document.createElement("span"); meta.className="pl-meta";
+  meta.textContent=p.lat.toFixed(5)+", "+p.lon.toFixed(5)+(p.conf?" · "+t("confidence")+": "+p.conf:"")+(p.src?" · "+p.src:"");
+  const links=document.createElement("div"); links.className="wk-links";
+  const g=document.createElement("a"); g.href="https://www.google.com/maps?q="+p.lat+","+p.lon; g.target="_blank"; g.rel="noopener"; g.textContent="Google Maps ↗";
+  const o=document.createElement("a"); o.href="https://www.openstreetmap.org/?mlat="+p.lat+"&mlon="+p.lon+"#map=16/"+p.lat+"/"+p.lon; o.target="_blank"; o.rel="noopener"; o.textContent="OpenStreetMap ↗";
+  links.append(g,o); info.append(nm,meta,links); c.append(fr,info);
+  return c;
+}
+// ---------- EXIF: GPS, дата и камера из оригинального JPEG (до уменьшения!) ----------
+async function readExif(file){
+  try{
+    if(!/jpe?g/i.test(file.type)&&!/\.jpe?g$/i.test(file.name)) return null;
+    const v=new DataView(await file.slice(0,262144).arrayBuffer());
+    if(v.getUint16(0)!==0xFFD8) return null;
+    let o=2;
+    while(o+4<v.byteLength){
+      const mk=v.getUint16(o), len=v.getUint16(o+2);
+      if(mk===0xFFE1&&v.getUint32(o+4)===0x45786966){ return parseTiff(v,o+10); }
+      if((mk&0xFF00)!==0xFF00) break; o+=2+len;
+    }
+  }catch(e){}
+  return null;
+}
+function parseTiff(v,t0){
+  const le=v.getUint16(t0)===0x4949;
+  const u16=x=>v.getUint16(x,le), u32=x=>v.getUint32(x,le);
+  const str=(off,n)=>{ let s=""; for(let i=0;i<n&&off+i<v.byteLength;i++){ const ch=v.getUint8(off+i); if(!ch) break; s+=String.fromCharCode(ch); } return s.trim(); };
+  const rat=off=>{ const d=u32(off+4); return d?u32(off)/d:0; };
+  const ifd=start=>{ const out={}; const n=u16(start); for(let i=0;i<n;i++){ const e=start+2+i*12, tag=u16(e), type=u16(e+2), cnt=u32(e+4), vo=e+8;
+      const size=({1:1,2:1,3:2,4:4,5:8,7:1,10:8})[type]||1, at=size*cnt>4?t0+u32(vo):vo;
+      if(type===2) out[tag]=str(at,cnt); else if(type===3) out[tag]=u16(at); else if(type===4) out[tag]=u32(at);
+      else if(type===5) out[tag]=Array.from({length:Math.min(cnt,3)},(_,k)=>rat(at+8*k)); }
+    return out; };
+  const r={}; const i0=ifd(t0+u32(t0+4));
+  if(i0[0x010F]) r.make=i0[0x010F]; if(i0[0x0110]) r.model=i0[0x0110];
+  if(i0[0x8769]){ const ex=ifd(t0+i0[0x8769]); if(ex[0x9003]) r.date=ex[0x9003]; }
+  if(i0[0x8825]){ const g=ifd(t0+i0[0x8825]); const dms=a=>Array.isArray(a)?a[0]+(a[1]||0)/60+(a[2]||0)/3600:NaN;
+    let lat=dms(g[2]), lon=dms(g[4]); if(g[1]==="S") lat=-lat; if(g[3]==="W") lon=-lon;
+    if(isFinite(lat)&&isFinite(lon)&&(lat||lon)) { r.lat=+lat.toFixed(6); r.lon=+lon.toFixed(6); } }
+  return Object.keys(r).length?r:null;
+}
+async function reverseGeocode(lat,lon){
+  const c=new AbortController(); const tm=setTimeout(()=>c.abort(),6000);
+  try{ const r=await fetch("https://nominatim.openstreetmap.org/reverse?format=jsonv2&zoom=16&accept-language=en&lat="+lat+"&lon="+lon,{signal:c.signal}); const j=await r.json(); return j.display_name||""; }
+  catch(e){ return ""; } finally{ clearTimeout(tm); }
+}
+function renderAnswer(el, text, autoOpen=true, question=""){
   el.textContent=""; let lastCode=null;
-  for(const p of splitAnswer(text)){
-    if(p.type==="text"){ const s=p.text.replace(/^\n+|\n+$/g,""); if(s) el.append(document.createTextNode(s+"\n")); continue; }
+  const all=splitAnswer(text);
+  // карточка из Википедии — всегда сверху ответа
+  const wk=all.find(p=>p.type==="wiki"); if(wk) el.append(wikiCard(wk.title, wk.ctx, question));
+  for(const p of all){
+    if(p.type==="wiki") continue;
+    if(p.type==="place"){ el.append(placeCard(p)); continue; }
+    if(p.type==="text"){ const s=p.text.replace(/^\n+|\n+$/g,""); if(s){ const d=document.createElement("div"); d.className="md"; d.innerHTML=mdToHtml(s); el.append(d); } continue; }
     if(p.type==="photo"){ renderPhotos(el,p.query); continue; }
     if(p.type==="image"){
       const card=document.createElement("button"); card.type="button"; card.className="img-card";
-      const img=document.createElement("img"); img.alt=p.prompt; img.loading="lazy";
-      const cap=document.createElement("div"); cap.className="cap"; const ct=document.createElement("span"); ct.textContent=t("imgMaking"); cap.append(ct);
+      const [pw,ph]=IMG_SIZES[p.size]||IMG_SIZES.square;
+      const holder=document.createElement("div"); holder.className="ph"; holder.style.aspectRatio=pw+"/"+ph;
+      const img=document.createElement("img"); img.alt=p.prompt; img.hidden=true;
+      const cap=document.createElement("div"); cap.className="cap"; const ct=document.createElement("span"); cap.append(ct);
       const dl=document.createElement("span"); dl.className="dl"; dl.setAttribute("role","button"); dl.tabIndex=0; dl.textContent=t("download"); dl.hidden=true;
       dl.onclick=e=>{ e.stopPropagation(); downloadImage(p); };
       dl.onkeydown=e=>{ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); e.stopPropagation(); downloadImage(p); } };
       const again=document.createElement("span"); again.className="again"; again.setAttribute("role","button"); again.tabIndex=0; again.textContent="↻ "+t("again"); again.hidden=true;
+      cap.append(again,dl);
+      const box=el.parentElement&&el.parentElement.querySelector(".trace");
+      const draw=()=>{
+        ct.textContent=t("imgMaking"); dl.hidden=true; again.hidden=true; img.hidden=true; holder.hidden=false; holder.classList.add("loading");
+        health("hImg","run");
+        getImage(p,box).then(r=>{
+          p.url=r.src; img.src=r.src; img.hidden=false; holder.hidden=true; holder.classList.remove("loading");
+          ct.textContent=p.prompt; ct.title=r.provider; dl.hidden=false; again.hidden=false;
+          health("hImg","ok","Images: "+r.provider);
+          if(current===p){ $("imgBig").src=r.src; }
+        }).catch(e=>{
+          holder.classList.remove("loading");
+          ct.textContent=t("imgFail")+" "+String(e.message||e).slice(0,420); again.hidden=false;
+          health("hImg","err","Images: "+String(e.message||e).slice(0,120));
+        });
+      };
       const reroll=e=>{ e.stopPropagation();
         const ns=String(Math.floor(Math.random()*1e9)), old="seed="+p.seed;
         cur().turns.forEach(tr=>tr.parts.forEach(pt=>{ if(pt.text&&pt.text.includes(old)) pt.text=pt.text.replace(old,"seed="+ns); })); saveChats();
-        p.seed=ns; p.url=imageUrl(p.prompt,ns,p.size); p.name="qwentity-"+ns+".jpg";
-        ct.textContent=t("imgMaking"); dl.hidden=true; again.hidden=true; img.hidden=false; tries=0; st=step("picture",box); img.src=p.url;
-        if(current===p) openPane(p);
+        p.seed=ns; p.url=""; p.name="qwentity-"+ns+".jpg"; draw();
       };
       again.onclick=reroll; again.onkeydown=e=>{ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); reroll(e); } };
-      cap.append(again,dl);
-      const box=el.parentElement&&el.parentElement.querySelector(".trace");
-      let st=step("picture",box), tries=0; health("hImg","run");
-      img.onload=()=>{ ct.textContent=p.prompt; dl.hidden=false; again.hidden=false; st.done(); health("hImg","ok","Images OK"); p.url=img.src; if(current===p) $("imgBig").src=img.src; };
-      img.onerror=async()=>{
-        let why="";
-        try{ const r=await fetch(p.url,{cache:"no-store"}); why="HTTP "+r.status+(r.status===429?" (limit)":""); }catch(e){ why="no connection"; }
-        health("hImg","err","Images: "+why);
-        if(tries++<1){ st.fail(why+" → retry 16s"); ct.textContent=t("imgMaking"); setTimeout(()=>{ st=step("picture retry",box); img.src=p.url+"&r="+Date.now(); },16000); return; }
-        st.fail(why); ct.textContent=t("imgFail")+" ("+why+")"; img.hidden=true; again.hidden=false;
-      };
-      img.src=p.url;
-      card.append(img,cap); card.onclick=()=>openPane(p); el.append(card); lastCode=p; continue;
+      // новый ответ — рисуем сразу; старый чат — берём из кэша, а без кэша ждём нажатия (не тратим лимит)
+      if(autoOpen) draw();
+      else imgDB.get(imgKey(p)).then(c=>{ if(c&&c.blob) draw(); else { ct.textContent=t("tapToDraw"); again.hidden=false; } });
+      card.append(holder,img,cap); card.onclick=()=>openPane(p); el.append(card); lastCode=p; continue;
     }
     const b=document.createElement("button"); b.type="button"; b.className="code-chip";
     const ic=document.createElement("span"); ic.className="ic"; ic.textContent="</>";
@@ -527,17 +947,82 @@ function openPane(c){
   const ce=$("codeEl"); ce.className=""; ce.textContent=c.code;
   if(window.hljs){ try{ if(hljs.getLanguage(c.lang)) ce.className="language-"+c.lang; hljs.highlightElement(ce); }catch(e){} }
   c.preview=c.type!=="image"&&canPreview(c);
-  if(c.type==="image"){ $("imgBig").src=c.url; $("imgBig").alt=c.prompt; }
+  if(c.type==="image"){ if(c.url) $("imgBig").src=c.url; else $("imgBig").removeAttribute("src"); $("imgBig").alt=c.prompt; }
   $("errBar").hidden=true; lastErr2=null;
   $("preview").srcdoc=c.preview?withCatcher(c.code):"";
   $("fvIcon").textContent="."+(c.name.split(".").pop());
   $("fvName").textContent=c.name;
   $("fvMeta").textContent=c.code.split("\n").length+" "+t("lines")+" · "+new Blob([c.code]).size+" "+t("bytes");
   const ext=c.name.split(".").pop().toLowerCase();
-  $("fvRun").textContent= ext==="py" ? t("runPy")+c.name : ext==="ino" ? t("runIno") : t("runOther");
+  $("fvRun").textContent= c.name==="diagram.json" ? t("diagramTip") : ext==="py" ? t("runPy")+c.name : ext==="ino" ? t("runIno") : t("runOther");
+  const tg=c.type==="code"?wokwiTarget(c):null;
+  $("pyOut").hidden=true; $("pyOut").textContent="";
+  const canRun=ext==="py"&&!PY_HW.test(c.code);
+  $("runBtn").hidden=!canRun; $("runBtn").textContent=t("runBtn"); $("runBtn").disabled=false;
+  if(ext==="py"&&!canRun&&!(tg&&(tg.url||tg.microbit))) $("fvRun").textContent=t("pyHw");
+  $("wokwiBtn").hidden=!(tg&&(tg.url||tg.microbit)); $("wokwiBtn").textContent=tg&&tg.microbit?t("microbitBtn"):t("wokwi");
+  if(tg&&tg.esp8266) $("fvRun").textContent=t("runIno")+" — "+t("esp8266Tip");
+  if(ext==="py"&&tg&&(tg.microbit||/micropython/.test(tg.url||""))) $("fvRun").textContent=t("runMicro");
   $("fvDl").textContent=t("download");
   showTab("prev");
 }
+// ---------- запуск Python прямо в браузере (Pyodide) ----------
+const PYODIDE="https://cdn.jsdelivr.net/pyodide/v0.26.4/full/";
+let pyodideP=null;
+function loadPy(){
+  if(pyodideP) return pyodideP;
+  pyodideP=new Promise((res,rej)=>{
+    const tm=setTimeout(()=>rej(new Error("loading took too long")),90000);
+    const go=()=>{ try{ window.loadPyodide({indexURL:PYODIDE}).then(v=>{ clearTimeout(tm); res(v); },e=>{ clearTimeout(tm); rej(e); }); }catch(e){ clearTimeout(tm); rej(e); } };
+    if(window.loadPyodide) return go();
+    const s=document.createElement("script"); s.src=PYODIDE+"pyodide.js"; s.onload=go; s.onerror=()=>rej(new Error("no connection to cdn.jsdelivr.net")); document.head.append(s);
+  }).catch(e=>{ pyodideP=null; throw e; });
+  return pyodideP;
+}
+const PY_HW=/^\s*(from|import)\s+(machine|microbit|utime|rp2|network|neopixel|RPi|gpiozero|serial|tkinter|pygame|turtle|board|busio|digitalio|smbus|spidev|picamera|cv2)\b/m;
+async function runPython(c){
+  const out=$("pyOut"), btn=$("runBtn");
+  out.hidden=false; out.textContent=t("pyLoading"); $("errBar").hidden=true; lastErr2=null; btn.disabled=true; btn.textContent=t("running");
+  try{
+    const py=await loadPy();
+    out.textContent="";
+    const w=s=>{ out.textContent+=s+"\n"; out.scrollTop=out.scrollHeight; };
+    py.setStdout({batched:w}); py.setStderr({batched:w});
+    py.setStdin({stdin:()=>{ const v=window.prompt("input()"); return v===null?"":v; }});
+    await py.loadPackagesFromImports(c.code);
+    const t0=performance.now();
+    await py.runPythonAsync(c.code);
+    w("\n✓ "+((performance.now()-t0)/1000).toFixed(2)+" s");
+  }catch(e){
+    const msg=String((e&&e.message)||e);
+    const loadFail=!pyodideP||/cdn\.jsdelivr|loadPyodide|took too long/.test(msg);
+    out.textContent=(loadFail?t("pyFail")+" ":out.textContent+(out.textContent?"\n":""))+msg;
+    if(!loadFail){ const last=msg.trim().split("\n").filter(Boolean).pop()||msg;
+      lastErr2=last.slice(0,300); $("errText").textContent=t("errBar")+" "+lastErr2; $("errBar").hidden=false; }
+  }finally{ btn.disabled=false; btn.textContent=t("runBtn"); }
+}
+// ---------- Wokwi (онлайн-симулятор Arduino/ESP32/Pico) ----------
+function wokwiTarget(c){
+  const code=c.code, ext=(c.name.split(".").pop()||"").toLowerCase(), b=$("board").value;
+  if(["ino","cpp","c","h"].includes(ext)||c.lang==="cpp"||c.lang==="arduino"){
+    if(b==="esp8266"||b==="kniwwelino"||/ESP8266WiFi|Kniwwelino/i.test(code)) return {esp8266:true};
+    if(b==="esp32"||/<WiFi\.h>|ESP32|BluetoothSerial|ledcWrite|esp_/.test(code)) return {url:"esp32"};
+    if(b==="pico") return {url:"pi-pico"};
+    return {url:{nano:"arduino-nano",mega:"arduino-mega"}[b]||"arduino-uno"};
+  }
+  if(ext==="py"){
+    if(b==="microbit"||/from microbit import|import microbit/.test(code)) return {microbit:true};
+    if(/^\s*(from|import)\s+(machine|utime|rp2|network|neopixel)\b/m.test(code)) return {url:(b==="esp32"||/\bnetwork\b|esp32/i.test(code))?"micropython-esp32":"micropython-pi-pico"};
+  }
+  return null;
+}
+async function copyText(s){ try{ await navigator.clipboard.writeText(s); return true; }catch(e){ const ta=document.createElement("textarea"); ta.value=s; document.body.append(ta); ta.select(); try{ document.execCommand("copy"); }catch(_){} ta.remove(); return true; } }
+$("runBtn").onclick=()=>{ if(current) runPython(current); };
+$("wokwiBtn").onclick=async()=>{
+  if(!current) return; const tg=wokwiTarget(current); await copyText(current.code);
+  if(tg&&tg.microbit){ window.open("https://python.microbit.org/v/3","_blank","noopener"); $("fvRun").textContent=t("wokwiTip"); return; }
+  if(tg&&tg.url){ window.open("https://wokwi.com/projects/new/"+tg.url,"_blank","noopener"); $("fvRun").textContent=t("wokwiTip"); }
+};
 // Ловим ошибки запущенной программы и предлагаем их исправить
 const CATCH="<script>(function(){function s(m){try{parent.postMessage({jvErr:String(m).slice(0,400)},'*')}catch(e){}}window.addEventListener('error',function(e){s((e.message||'Error')+(e.lineno?' (line '+e.lineno+')':''))});window.addEventListener('unhandledrejection',function(e){s('Promise: '+((e.reason&&e.reason.message)||e.reason))});var ce=console.error;console.error=function(){s([].slice.call(arguments).join(' '));ce.apply(console,arguments)}})();<\/script>";
 function withCatcher(code){ return /<head[^>]*>/i.test(code) ? code.replace(/<head[^>]*>/i,m=>m+CATCH) : CATCH+code; }
@@ -563,7 +1048,24 @@ function downloadFile(c){ const a=document.createElement("a"); a.href=URL.create
 $("dlBtn").onclick=()=>{ if(!current) return; current.type==="image"?downloadImage(current):downloadFile(current); };
 $("fvDl").onclick=()=>{ if(current) downloadFile(current); };
 $("closeBtn").addEventListener("click",()=>{ $("imgBig").removeAttribute("src"); });
-function paintChats(){ $("chatsBtn").textContent="☰ "+t("chats"); $("newChat").textContent=t("newChat"); $("newChat2").textContent=t("newChat"); $("chatsTitle").textContent=t("chats"); }
+$("exportBtn").onclick=()=>{ downloadFile({code:JSON.stringify({app:"qwentity",version:1,exported:new Date().toISOString(),chats:stripChats()},null,1),name:"qwentity-chats-"+new Date().toISOString().slice(0,10)+".json"}); };
+$("importBtn").onclick=()=>$("importFile").click();
+$("importFile").onchange=async e=>{
+  const f=e.target.files[0]; e.target.value=""; if(!f) return;
+  try{
+    const j=JSON.parse(await f.text()); const list=Array.isArray(j)?j:j.chats; if(!Array.isArray(list)) throw 0;
+    let n=0;
+    for(const c of list){
+      if(!c||!Array.isArray(c.turns)) continue;
+      const turns=c.turns.filter(tr=>tr&&Array.isArray(tr.parts)).map(tr=>{ const o={role:tr.role==="model"?"model":"user",parts:tr.parts.filter(p=>p&&typeof p.text==="string").map(p=>({text:p.text}))}; if(typeof tr._display==="string") o._display=tr._display; return o; }).filter(tr=>tr.parts.length);
+      if(!turns.length) continue;
+      let id=String(c.id||Date.now()); if(chats.some(x=>x.id===id)) id=String(Date.now())+Math.random().toString(36).slice(2,6);
+      chats.push({id,title:String(c.title||"").slice(0,80),updated:+c.updated||Date.now(),turns}); n++;
+    }
+    saveChats(); renderList(); $("importNote").textContent=t("imported").replace("{n}",n);
+  }catch(err){ $("importNote").textContent=t("importBad"); }
+};
+function paintChats(){ $("exportBtn").textContent=t("exportChats"); $("importBtn").textContent=t("importChats"); $("chatsBtn").textContent="☰ "+t("chats"); $("newChat").textContent=t("newChat"); $("newChat2").textContent=t("newChat"); $("chatsTitle").textContent=t("chats"); }
 function paintFix(){ $("fixBtn").textContent=t("fix"); }
 function paintPane(){ paintFix(); $("tabCode").textContent=t("codeTab"); $("tabPrev").textContent=t("prevTab"); $("fvDl").textContent=t("download"); $("copyBtn").textContent=t("copy"); $("dlBtn").textContent=t("download"); }
 
@@ -586,13 +1088,18 @@ const AI_BLUEPRINT=`BUILDING AI APPS — verified reference, follow it exactly w
 const SELF_RE=/(как ты|как у тебя|такой же|копи[юя] себя|себя самого|like you|like yourself|copy of you|comme toi|wie du|come te|qwentity|jarvis)/i;
 function systemText(){
   const about=$("about").value.trim();
-  const lastQ=((cur().turns.filter(x=>x.role==="user").slice(-1)[0]||{parts:[{text:""}]}).parts[0].text)||"";
+  const lastU=cur().turns.filter(x=>x.role==="user").slice(-1)[0];
+  const lastQ=lastU?(lastU._display||lastU.parts.map(p=>p.text||"").join(" ")):"";
   const self = SELF_RE.test(lastQ) && /(ai|ии|бот|bot|assistant|ассистент|помощник|приложени|app|сделай|make|build|crée|fais|bau|crea)/i.test(lastQ)
     ? "\n\nYOUR OWN SOURCE CODE (you are this single HTML file; the user wants an AI like you — use it as the reference for features and quality, simplify where sensible, and write the COMPLETE new file):\n"+OWN_SRC.replace(/AQ\.[\w-]{20,}|AIza[\w-]{30,}/g,"PASTE_YOUR_GEMINI_KEY_HERE").slice(0,120000)
     : "";
   return AI_BLUEPRINT+"\n\n"+"You are Qwentity, a smart voice assistant and mentor. Your main language is English. You understand English, Russian, French, German and Italian: ALWAYS reply in the same language as the user's LATEST message (if it is mixed or unclear, reply in English). "+
-  "The text of your answer is read aloud: write normal text as plain text, no markdown, asterisks, tables or emoji; numbered points like '1.' are fine. "+
+  "Your answer is shown with Markdown AND read aloud: use light Markdown for readability (**bold**, short bullet or numbered lists, small tables, `inline code`), no emoji spam, sentences that sound natural when spoken. "+
+  "ATTACHMENTS: when the user attaches a photo or file (circuit, breadboard, Arduino/ESP board, schematic, screenshot of an error, code, PDF datasheet, homework), study it carefully first: name the components and boards you see, follow every wire, read pin labels and error messages, and point out concrete mistakes (wrong pin, missing resistor or GND, reversed LED/diode, short circuit, wrong voltage, typo in code) with the exact fix. If something is not visible, say what photo would help. "+
   "EXCEPTION — code: whenever you write code, put the COMPLETE, runnable code in a fenced block with the language AND a short file name on the opening line, e.g. ```html snake.html or ```python weather.py or ```cpp blink.ino. It opens in a separate code window, so keep the text around it short (what it does, how to run it). "+
+  "WIKIPEDIA CARD: when the user asks who or what a notable person, place, animal, building, event, artwork, company or invention is (e.g. 'who is Einstein', 'what is the Eiffel Tower'), START your answer with a fenced block ```wiki whose first line is the exact title of the specific English Wikipedia article (e.g. Albert Einstein, or Gëlle Fra) — never a generic name that could mean several things — and whose second line is 'context:' plus 2–4 words that identify it (e.g. 'context: statue Luxembourg City'). The page shows its photo and summary on top, so do not repeat that block's content as a list; then answer normally. Never use it for private, non-notable people. "+
+  "PHOTO LOCATION: when the user asks where a photo was taken, (1) use GPS from the photo metadata if it is given — it is exact; (2) otherwise investigate visual clues: landmarks, architecture, shop signs and their language, licence plates, road markings and signs, side of the road, vegetation, terrain, weather, sun position, and confirm landmarks with Google Search; (3) give your best guess with a confidence and list the clues that led you there; (4) end with a fenced block ```place with ONE line: latitude, longitude | place name | confidence (high/medium/low). "+
+  "Privacy: if the photo mainly shows private individuals or what looks like a private home, do NOT pinpoint an exact address — give only the city or region and say that you stop there to protect people's privacy. Never try to identify private people from their face. "+
   "PICTURES — two different tools, choose carefully: "+
   "(A) REAL photos: when the user wants to SEE something that really exists (a real coin, banknote, stamp, building, place, animal, person, product, device, board, logo, event, 'show me how X looks'), NEVER invent a picture. "+
   "First use Google Search to find the facts, describe what it really looks like in 2–4 sentences, then add a fenced block ```photo containing ONE short precise search query in English (e.g. 'Luxembourg 2 euro commemorative coin 2026'). The page will search real photos with it. "+
@@ -606,14 +1113,34 @@ function systemText(){
   "Implement EVERYTHING the user asked for, plus the obvious things a good version needs (e.g. for games: start screen, score, restart, increasing difficulty, keyboard AND touch controls, sound only after a click, smooth requestAnimationFrame loop, resizing). "+
   "Make it look polished: clean modern design, good colours, readable fonts, spacing, animations where they help. "+
   "Structure code into clear named functions with short comments explaining the important parts, so a teenager can learn from it. "+
-  "For Arduino/ESP32/micro:bit: name the exact board, pins and libraries, use non-blocking millis() timing instead of long delay() when several things happen at once, and include Serial debug output. "+
+  arduinoRules()+
   "For Python: standard library where possible; if a package is needed, say the pip install command in one sentence. "+
   "When the user asks to change or fix code from earlier in the chat, always output the FULL updated file, never only a fragment. "+
   "For anything visual or interactive (games, web pages, animations, calculators) prefer ONE self-contained HTML file with inline CSS and JS in a ```html block, so it can be previewed live. "+
   "Answer simple questions briefly. When asked for ideas, advice or a plan, think properly: no generic ideas from typical lists — only original, concrete, doable ones. "+
   "For project ideas (e.g. for the Jonk Fuerscher / FJSL contest in Luxembourg) give for each: the research question or what is new, what to build or program, what to measure, and why it impresses a jury. Prefer 3–4 strong ideas over 10 weak ones. "+
   "Use Google Search for news and current facts. Today is "+new Date().toISOString().slice(0,10)+". "+
+  (teach?TEACH_RULES:"")+
   (about?"Who is asking: "+about:"")+self;
+}
+// ---------- режим «Учитель» ----------
+const TEACH_RULES="TEACHER MODE IS ON: the user is a student (about 12–18) who wants to LEARN. Do NOT give the complete solution or full program at once. "+
+  "Explain the idea in simple words, split the task into small steps, give ONE step at a time with at most a short code fragment (max ~10 lines) for that step, then ask ONE guiding question or a mini-task and wait. "+
+  "Give hints before answers, praise real progress, point out mistakes kindly and explain why. If the student shows their code, review it like a coach (what is good, what to fix, a hint) instead of rewriting it. "+
+  "Only give the full solution if the user explicitly says they are the teacher or asks for the full solution twice. Factual questions can still be answered directly. ";
+let teach=S.get("jv-teach")==="on";
+function paintTeach(){ $("teachBtn").setAttribute("aria-pressed",teach); $("teachBtn").textContent="🎓 "+t("teacher")+": "+t(teach?"on":"off"); }
+$("teachBtn").onclick=()=>{ teach=!teach; S.set("jv-teach",teach?"on":"off"); paintTeach(); };
+// ---------- Arduino и микроконтроллеры ----------
+const BOARD_NAMES={uno:"Arduino Uno (5V)",nano:"Arduino Nano (5V)",mega:"Arduino Mega 2560 (5V)",esp32:"ESP32 DevKit (3.3V logic)",esp8266:"ESP8266 NodeMCU/Wemos D1 mini (3.3V logic)",kniwwelino:"Kniwwelino (ESP8266-based board from Luxembourg, 3.3V, 5x5 LED matrix, 2 buttons, RGB LED, Kniwwelino library)",pico:"Raspberry Pi Pico with MicroPython (3.3V)",microbit:"BBC micro:bit V2 with MicroPython (3.3V)"};
+function arduinoRules(){
+  const b=$("board").value;
+  return "ARDUINO / MICROCONTROLLERS (very important for this makerspace): "+(b?"The user's board is "+BOARD_NAMES[b]+" — write code and wiring for exactly this board unless they ask for another. ":"No board chosen: pick the most suitable common board (default Arduino Uno) and say which. ")+
+  "For every hardware project answer in this order: (1) **Parts** list; (2) **Wiring** as a Markdown table | Part pin | Board pin | Note | with exact pin numbers that really exist on that board, resistor values and power — warn clearly when a 3.3V board meets 5V parts, never connect an LED without a resistor, never power motors or servos from a pin, and share GND; "+
+  "(3) the COMPLETE sketch: Arduino C++ in ```cpp name.ino (setup()/loop(), const pin names, non-blocking millis() timing instead of long delay() when several things happen at once, Serial.begin(115200) with useful debug prints, comments a teenager understands; for ESP boards use correct pin names such as GPIO numbers or D1); for Pico/ESP32 MicroPython use ```python main.py with 'from machine import Pin'; for micro:bit use ```python main.py with 'from microbit import *'; "+
+  "(4) **Libraries**: exact names to install in the Arduino IDE Library Manager, and for ESP32/ESP8266 the board package and its Boards Manager URL; (5) **Upload**: which board and port to select, and the Serial Monitor baud rate. "+
+  "If the circuit can be simulated in Wokwi (Uno, Nano, Mega, ESP32, Pico — NOT ESP8266, Kniwwelino or micro:bit), ALSO add a ```json diagram.json block in Wokwi's diagram format: {\"version\":1,\"author\":\"Qwentity\",\"editor\":\"wokwi\",\"parts\":[{\"type\":\"wokwi-arduino-uno\",\"id\":\"uno\",\"top\":0,\"left\":0,\"attrs\":{}},…],\"connections\":[[\"uno:13\",\"led1:A\",\"green\",[]],…]} using real Wokwi part types (wokwi-arduino-uno, wokwi-arduino-nano, wokwi-arduino-mega, board-esp32-devkit-c-v4, wokwi-pi-pico, wokwi-led, wokwi-resistor, wokwi-pushbutton, wokwi-potentiometer, wokwi-servo, wokwi-dht22, wokwi-hc-sr04, wokwi-lcd1602, wokwi-ssd1306, wokwi-buzzer, wokwi-neopixel, wokwi-photoresistor-sensor) and their real pin names. "+
+  "When the user shows a compiler or upload error, explain the cause in one sentence and give the fix. ";
 }
 // Пробуем модели по очереди: если у одной нет бесплатного лимита (или на поиск Google), берём следующую
 function modelCandidates(){
@@ -628,14 +1155,27 @@ function thinkingFor(model){
   if(/2\.5|latest/.test(model)) return {thinkingBudget:-1};
   return null;
 }
-async function callModel(key, model, withSearch, signal, contents, rich=true){
+// Читаем ответ по кусочкам (SSE), чтобы текст появлялся сразу
+async function readSSE(r,onText){
+  const rd=r.body.getReader(), dec=new TextDecoder(); let buf="", text="", gm=null, fr=null;
+  const eat=line=>{ line=line.trim(); if(!line.startsWith("data:")) return; let d; try{ d=JSON.parse(line.slice(5)); }catch(e){ return; }
+    const c=(d.candidates||[])[0]||{};
+    ((c.content&&c.content.parts)||[]).forEach(pt=>{ if(pt.text&&!pt.thought) text+=pt.text; });
+    if(c.groundingMetadata) gm=c.groundingMetadata; if(c.finishReason) fr=c.finishReason;
+    onText(text); };
+  for(;;){ const {done,value}=await rd.read(); if(done) break; buf+=dec.decode(value,{stream:true});
+    let i; while((i=buf.indexOf("\n"))>=0){ eat(buf.slice(0,i)); buf=buf.slice(i+1); } }
+  if(buf) eat(buf);
+  return {candidates:[{content:{parts:[{text}]},groundingMetadata:gm,finishReason:fr}]};
+}
+async function callModel(key, model, withSearch, signal, contents, rich=true, onText=null){
   const body={ systemInstruction:{parts:[{text:systemText()}]}, contents:contents||apiTurns() };
   if(withSearch) body.tools=[{google_search:{}}];
   if(rich){ body.generationConfig={maxOutputTokens:65536}; const th=thinkingFor(model); if(th) body.generationConfig.thinkingConfig=th; }
   let r=null, netErr=null;
   for(let attempt=0; attempt<3 && !r; attempt++){
     try{
-      r=await fetch(API+"/models/"+encodeURIComponent(model)+":generateContent",{
+      r=await fetch(API+"/models/"+encodeURIComponent(model)+(onText?":streamGenerateContent?alt=sse":":generateContent"),{
         method:"POST", signal, headers:{"Content-Type":"application/json","x-goog-api-key":key}, body:JSON.stringify(body)
       });
     }catch(e){
@@ -645,18 +1185,20 @@ async function callModel(key, model, withSearch, signal, contents, rich=true){
     }
   }
   if(!r) throw new Error("NETWORK: "+String((netErr&&netErr.message)||netErr));
+  if(onText&&r.ok&&r.body) return { ok:true, status:200, j:await readSSE(r,onText), msg:"" };
   let j={}; try{ j=await r.json(); }catch(e){}
+  if(Array.isArray(j)) j=j[0]||{};
   const res={ ok:r.ok, status:r.status, j, msg:(j.error&&j.error.message)||("HTTP "+r.status) };
   // если модель не поддерживает настройки «думать дольше» — пробуем без них
-  if(!res.ok&&rich&&res.status===400&&/thinking|maxOutputTokens|max_output_tokens|generation_?config/i.test(res.msg)) return callModel(key, model, withSearch, signal, contents, false);
+  if(!res.ok&&rich&&res.status===400&&/thinking|maxOutputTokens|max_output_tokens|generation_?config/i.test(res.msg)) return callModel(key, model, withSearch, signal, contents, false, onText);
   return res;
 }
-async function generate(key, signal, out, contents, searchModes=[true,false]){
+async function generate(key, signal, out, contents, searchModes=[true,false], onText=null){
   const tried=[];
   for(const model of modelCandidates()){
     for(const withSearch of searchModes){
       const st=step(model+(withSearch?" + Google":"")); health("hGem","run");
-      let res; try{ res=await callModel(key, model, withSearch, signal, contents); }catch(e){ st.fail("network"); throw e; }
+      let res; try{ res=await callModel(key, model, withSearch, signal, contents, true, onText); }catch(e){ st.fail(signal&&signal.aborted?"stopped":"network"); throw e; }
       if(res.ok) { st.done(); health("hGem","ok","Gemini: "+model+" OK"); } else { st.fail(String(res.status)); health("hGem","err","Gemini: "+res.status+" "+res.msg.slice(0,120)); }
       if(res.ok){
         if($("model").value!==model){
@@ -681,16 +1223,17 @@ async function generate(key, signal, out, contents, searchModes=[true,false]){
 
 // Второй проход: Qwentity сам проверяет и улучшает свой код
 const REVIEW="Act as a strict senior engineer reviewing the code you just wrote. Mentally run it line by line. Find and fix: syntax errors, runtime errors, undefined variables, missing imports, logic bugs, unfinished parts, anything from my request that is missing or done poorly, bad UX or ugly design, edge cases. Then improve it further so it is clearly better. "+
-  "Output ONLY: one short sentence in the same language as before, then the COMPLETE final file in ONE fenced block with the same language and file name on the opening line. No diff, no list of changes.";
+  "Output ONLY the complete improved answer in the same structure and language as before: keep every section (parts, wiring table, libraries, upload steps) and give the COMPLETE final version of EVERY file, each in its own fenced block with the same language and file name on the opening line. No diff, no list of changes.";
 // ---------- индикатор: что работает, а что нет ----------
 let TRACE=null;
 function health(id,state,title){ const e=$(id); if(!e) return; e.className=state; if(title) e.title=title; }
 function step(label,box){
   box=box||TRACE; const t0=performance.now();
-  if(!box) return {done(){},fail(){}};
+  if(!box) return {done(){},fail(){},info(){}};
   const s=document.createElement("span"); s.className="run"; s.textContent="… "+label; box.append(s);
   const sec=()=>((performance.now()-t0)/1000).toFixed(1)+"s";
-  return { done(d){ s.className="ok"; s.textContent="✓ "+label+" "+(d||sec()); },
+  return { info(d){ s.textContent="… "+label+" — "+d; },
+           done(d){ s.className="ok"; s.textContent="✓ "+label+" "+(d||sec()); },
            fail(d){ s.className="err"; s.textContent="✗ "+label+" "+(d||""); } };
 }
 // Если явно просили картинку, а блока ```image нет — сами составляем описание и рисуем
@@ -711,6 +1254,16 @@ function localPrompt(q){
            .replace(/^(нарисуй|сгенерируй|создай|сделай)\s+(мне\s+)?(картинку|изображение|рисунок)?\s*/i,"");
   return s.trim()+", colorful cartoon illustration, clean composition, soft lighting, no text";
 }
+function streamPreview(s){
+  s=s.replace(/```(wiki|place)[^`]*?(```|$)/g,"");
+  return s.replace(/```(\w*)[ \t]*([^\n]*)\n[\s\S]*?```/g,(m,l,n)=> l==="image"?"[🎨 picture]":l==="photo"?"[🖼 photos]":"[📄 "+(n||l||"code")+"]")
+          .replace(/```(\w*)[ \t]*([^\n]*)\n?([\s\S]*)$/,(m,l,n,b)=> (l==="image"||l==="photo")?"…":"[⏳ "+t("writing")+" "+(n||l||"code")+" · "+b.split("\n").length+" "+t("lines")+"…]");
+}
+// «Кто такой Эйнштейн?» → ищем карточку в Википедии, даже если модель её не добавила
+function whoIs(q){
+  const m=String(q).trim().match(/^(?:who (?:is|was)|what (?:is|was) (?:a |an |the )?|tell me about|кто так(?:ой|ая|ие)|кто был[аи]?|что такое|расскажи (?:мне )?(?:про|о)|qui (?:est|était)|qu'est-ce que|wer (?:ist|war)|was ist|chi (?:è|era)|cos'è|che cos'è)\s+(.{2,60}?)[\s?!.]*$/i);
+  if(!m) return null; const s=m[1].trim(); if(s.split(/\s+/).length>6) return null; return s;
+}
 function hasCode(text){ return splitAnswer(text).some(p=>p.type==="code"); }
 async function reviewCode(key, signal, answer){
   const contents=[...apiTurns(), {role:"model",parts:[{text:answer}]}, {role:"user",parts:[{text:REVIEW}]}];
@@ -720,6 +1273,50 @@ async function reviewCode(key, signal, answer){
   const finished=cand.finishReason!=="MAX_TOKENS";
   return (better&&hasCode(better)&&finished) ? better : null;
 }
+
+// ---------- вложения: фото, PDF, текстовые файлы ----------
+let pending=[];
+const TEXT_EXT=/\.(txt|md|py|ino|c|cpp|h|hpp|js|ts|html|css|json|csv|xml|ya?ml|sh|log)$/i;
+function toB64(blob){ return new Promise((res,rej)=>{ const r=new FileReader(); r.onload=()=>res(String(r.result).split(",")[1]); r.onerror=()=>rej(r.error); r.readAsDataURL(blob); }); }
+async function shrinkImage(file,max){
+  const bmp=await createImageBitmap(file);
+  const k=Math.min(1,max/Math.max(bmp.width,bmp.height)), w=Math.round(bmp.width*k), hh=Math.round(bmp.height*k);
+  const cv=document.createElement("canvas"); cv.width=w; cv.height=hh; cv.getContext("2d").drawImage(bmp,0,0,w,hh); bmp.close&&bmp.close();
+  const blob=await new Promise(r=>cv.toBlob(r,"image/jpeg",0.85));
+  return {data:await toB64(blob),mime:"image/jpeg",url:URL.createObjectURL(blob)};
+}
+function trayNote(msg){ interim.textContent=msg; setTimeout(()=>{ if(interim.textContent===msg) interim.textContent=""; },6000); }
+async function addFiles(list){
+  for(const f of [...list]){
+    if(pending.length>=6) break;
+    try{
+      if(/^image\//.test(f.type)){ const meta=await readExif(f); const r=await shrinkImage(f,1600); pending.push({kind:"image",name:f.name||"photo.jpg",mime:r.mime,data:r.data,thumb:r.url,meta}); }
+      else if(f.type==="application/pdf"||/\.pdf$/i.test(f.name)){ if(f.size>15e6){ trayNote(t("tooBig")+" "+f.name); continue; } pending.push({kind:"pdf",name:f.name,mime:"application/pdf",data:await toB64(f)}); }
+      else if(TEXT_EXT.test(f.name)||/^text\//.test(f.type)){ if(f.size>400000){ trayNote(t("tooBig")+" "+f.name); continue; } pending.push({kind:"text",name:f.name,text:await f.text()}); }
+      else trayNote(t("badType")+" "+f.name);
+    }catch(e){ trayNote(f.name+": "+String((e&&e.message)||e)); }
+  }
+  paintTray(); paintSend();
+}
+function attChip(a,removable){
+  const d=document.createElement("div"); d.className="att";
+  if(a.kind==="image"&&a.thumb){ const im=document.createElement("img"); im.src=a.thumb; im.alt=a.name; d.append(im); }
+  else { const ic=document.createElement("div"); ic.className="ic2"; ic.textContent=a.kind==="pdf"?"PDF":"."+(a.name.split(".").pop()||"txt"); d.append(ic); }
+  const s=document.createElement("span"); s.textContent=a.name; d.append(s);
+  if(removable){ const x=document.createElement("button"); x.type="button"; x.textContent="✕"; x.setAttribute("aria-label","Remove "+a.name); x.onclick=()=>{ pending=pending.filter(p=>p!==a); paintTray(); paintSend(); }; d.append(x); }
+  return d;
+}
+function paintTray(){ const tr=$("tray"); tr.textContent=""; pending.forEach(a=>tr.append(attChip(a,true)));
+  if(pending.some(a=>a.kind==="image")){ const w=document.createElement("button"); w.type="button"; w.className="where-btn"; w.textContent="📍 "+t("whereBtn"); w.onclick=()=>{ $("q").value=""; ask(t("whereQ")); }; tr.append(w); }
+  tr.hidden=!pending.length; }
+$("attachBtn").onclick=()=>$("fileIn").click();
+$("fileIn").onchange=e=>{ addFiles(e.target.files); e.target.value=""; };
+document.addEventListener("paste",e=>{ const fs=[...((e.clipboardData&&e.clipboardData.files)||[])]; if(fs.length){ e.preventDefault(); addFiles(fs); } });
+let dragDepth=0;
+window.addEventListener("dragenter",e=>{ if(e.dataTransfer&&[...e.dataTransfer.types].includes("Files")){ dragDepth++; document.body.classList.add("dragging"); } });
+window.addEventListener("dragleave",()=>{ dragDepth=Math.max(0,dragDepth-1); if(!dragDepth) document.body.classList.remove("dragging"); });
+window.addEventListener("dragover",e=>{ if(e.dataTransfer&&[...e.dataTransfer.types].includes("Files")) e.preventDefault(); });
+window.addEventListener("drop",e=>{ if(!e.dataTransfer||!e.dataTransfer.files.length) return; e.preventDefault(); dragDepth=0; document.body.classList.remove("dragging"); addFiles(e.dataTransfer.files); });
 
 async function ask(question){
   const key=$("key").value.trim();
@@ -732,17 +1329,36 @@ async function ask(question){
   const timer=setTimeout(()=>ctl.abort("timeout"),300000);
   busy=true;
   log.querySelectorAll(".intro").forEach(e=>e.remove());
-  addMsg("u",t("you"),question);
-  const turn={role:"user",parts:[{text:question}]};
+  const files=pending; pending=[]; paintTray();
+  if(!question&&files.length) question=t("lookAtThis");
+  const um=addMsg("u",t("you"),question);
+  if(files.length){ const box=document.createElement("div"); box.className="atts"; files.forEach(a=>box.append(attChip(a,false))); um.append(box); }
+  let fullText=question;
+  const gpsPhotos=[];
+  for(const a of files.filter(x=>x.kind==="image"&&x.meta)){
+    const m=a.meta, bits=[];
+    if(m.lat!=null){ const addr=await reverseGeocode(m.lat,m.lon); gpsPhotos.push({lat:m.lat,lon:m.lon,addr,name:a.name}); bits.push("GPS "+m.lat+", "+m.lon+(addr?" ("+addr+")":"")); }
+    if(m.date) bits.push("taken "+m.date); if(m.make||m.model) bits.push("camera "+[m.make,m.model].filter(Boolean).join(" "));
+    if(bits.length) fullText+="\n\n[Metadata of photo "+a.name+": "+bits.join("; ")+"]";
+  }
+  files.filter(a=>a.kind==="text").forEach(a=>{ fullText+="\n\nFile "+a.name+":\n```\n"+a.text.slice(0,200000)+"\n```"; });
+  const turn={role:"user",parts:[{text:fullText},...files.filter(a=>a.kind!=="text").map(a=>({inlineData:{mimeType:a.mime,data:a.data},_name:a.name}))]};
+  if(files.length) turn._display=question+"\n"+files.map(a=>"📎 "+a.name).join("  ");
   const thisChat=cur();
   thisChat.turns.push(turn); thisChat.updated=Date.now();
   if(!thisChat.title) thisChat.title=question.slice(0,48);
   saveChats();
   const out=addMsg("j",t("jarvis"),t("think")); mic.classList.add("busy"); setStatus("thinking");
   const tr=document.createElement("div"); tr.className="trace"; out.append(tr); TRACE=tr;
-  let answer="";
+  let answer="", streamed="";
+  const bodyEl=out.querySelector(".body");
   try{
-    const j=await generate(key, ctl.signal, out);
+    const j=await generate(key, ctl.signal, out, undefined, undefined, txt=>{
+      if(reqCtl!==ctl) return;
+      streamed=txt; bodyEl.textContent=streamPreview(txt);
+      const nearBottom=log.scrollHeight-log.scrollTop-log.clientHeight<120; if(nearBottom) log.scrollTop=log.scrollHeight;
+      if(statusKey!=="writing") setStatus("writing");
+    });
     const cand=(j.candidates||[])[0]||{};
     answer=((cand.content&&cand.content.parts)||[]).filter(p=>p.text&&!p.thought).map(p=>p.text).join("").trim();
     if(!answer) throw new Error("EMPTY");
@@ -753,15 +1369,17 @@ async function ask(question){
       if(pr) st.done(); else { st.fail("→ fallback"); pr=localPrompt(question); }
       answer=answer+"\n\n```image size=square\n"+pr+"\n```";
     }
+    if(gpsPhotos.length&&!/```place/.test(answer)){ const g=gpsPhotos[0]; answer+="\n\n```place\n"+g.lat+", "+g.lon+" | "+(g.addr?g.addr.split(",").slice(0,3).join(","):g.name)+" | high | photo GPS\n```"; }
+    if(!/```wiki/.test(answer)){ const wt=whoIs(question); if(wt) answer="```wiki\n"+wt+"\n```\n"+answer; }
     answer=addSeeds(answer);
-    renderAnswer(out.querySelector(".body"), answer);
-    if(hasCode(answer)){
+    renderAnswer(out.querySelector(".body"), answer, true, question);
+    if(hasCode(answer)&&!teach){
       // показываем первую версию, а пока Qwentity проверяет и улучшает код
       setStatus("improving");
       const note=document.createElement("span"); note.className="src"; note.textContent=t("improving"); out.append(note);
       try{
         const better=await reviewCode(key, ctl.signal, answer);
-        if(better){ answer=addSeeds(better); renderAnswer(out.querySelector(".body"), answer); note.textContent=t("improved"); }
+        if(better){ answer=addSeeds(better); renderAnswer(out.querySelector(".body"), answer, true, question); note.textContent=t("improved"); }
         else note.remove();
       }catch(e){ if(reqCtl!==ctl) throw e; note.remove(); }
     }
@@ -779,7 +1397,8 @@ async function ask(question){
     out.classList.add("err");
     let m=String((e&&e.message)||e);
     const raw=m;
-    if(e&&e.name==="AbortError"||m==="timeout") m="Stopped: no answer from Google for 5 minutes. Try again or ask a shorter question.";
+    if(ctl.userStop){ out.classList.remove("err"); m=(streamed?streamPreview(streamed)+"\n\n":"")+"■ "+t("stopped"); health("hGem","ok"); }
+    else if(e&&e.name==="AbortError"||m==="timeout") m="Stopped: no answer from Google for 5 minutes. Try again or ask a shorter question.";
     else if(m==="EMPTY") m=t("empty");
     else if(/API key|API_KEY/i.test(m)) m=t("badKey");
     else if(/quota|RESOURCE_EXHAUSTED|429/i.test(m)) m=t("quota")+"\n\n(Google: "+m.slice(0,300)+")";
@@ -801,7 +1420,11 @@ async function ask(question){
   setStatus(wakeOn?"waiting":"ready");
   if(wakeOn) startWake();
 }
-$("form").addEventListener("submit",e=>{ e.preventDefault(); const v=$("q").value.trim(); if(v){ $("q").value=""; if(v.split(/\s+/).length>=3) setMicLang(SPEECH[detectLang(v)]); ask(v); } });
+$("q").addEventListener("input",paintSend);
+$("form").addEventListener("submit",e=>{ e.preventDefault(); const v=$("q").value.trim();
+  if(!v&&pending.length){ ask(""); return; }
+  if(!v){ if(reqCtl){ reqCtl.userStop=true; reqCtl.abort(); } else { stopSpeaking(); setStatus(wakeOn?"waiting":"ready"); } return; }
+  if(v){ $("q").value=""; if(v.split(/\s+/).length>=3) setMicLang(SPEECH[detectLang(v)]); ask(v); } });
 
 // ---------- распознавание речи ----------
 const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
