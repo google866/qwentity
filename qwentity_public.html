@@ -63,6 +63,11 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-vis
 .mic-langs{display:flex;gap:4px}
 .mic-langs button{background:none;border:1px solid var(--line);color:var(--muted);border-radius:6px;padding:3px 8px;font-family:var(--f-mono);font-size:11px;cursor:pointer}
 .mic-langs button[aria-pressed="true"]{color:var(--bg);background:var(--core);border-color:var(--core)}
+/* схемы и формулы */
+.diagram{margin:8px 0;padding:12px;background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow-x:auto;white-space:normal;max-width:100%}
+.diagram svg{max-width:100%;height:auto;display:block;margin:0 auto}
+.mm-fallback{margin:0;font-family:var(--f-mono);font-size:12px;white-space:pre-wrap;color:var(--muted)}
+.md .katex-display{overflow-x:auto;overflow-y:hidden;padding:4px 0}
 /* ответы с Markdown */
 .msg .body{display:block}
 .md{white-space:normal}
@@ -146,6 +151,11 @@ body.dragging .app{outline:2px dashed var(--core);outline-offset:-6px}
 .place-card iframe{display:block;width:100%;height:240px;border:0;background:var(--bg)}
 .pl-info{display:flex;flex-direction:column;gap:4px;padding:10px 12px}
 .pl-meta{font-family:var(--f-mono);font-size:12px;color:var(--muted)}
+.img-card .cap .pconnect{background:var(--core);color:var(--bg);font-weight:600;padding:8px 14px;font-size:13px;flex:none;overflow:visible;white-space:nowrap}
+.img-card.failed{cursor:default}
+.img-card.failed .ph{display:none}
+.img-card.failed .cap{flex-wrap:wrap;padding:12px}
+.img-card.failed .cap>span:first-child{white-space:normal;overflow:visible;flex-basis:100%;color:var(--fg);line-height:1.45}
 .where-btn{background:var(--core);color:var(--bg);border:0;border-radius:10px;padding:6px 12px;font:inherit;font-size:13px;cursor:pointer;align-self:center}
 .photos{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px;margin:8px 0;max-width:560px}
 .photos button{padding:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--panel);cursor:pointer;display:flex;flex-direction:column}
@@ -193,7 +203,7 @@ body.pane-open .app{margin-right:min(58vw,900px);margin-left:max(0px,calc((100vw
     <h1 id="title">QWENTITY</h1>
     <button class="btn" id="newChat"></button>
     <span class="status" id="status"></span>
-    <span class="health"><span id="hGem" title="Gemini">AI</span><span id="hImg" title="Images">IMG</span></span>
+    <span class="health"><span id="hGem" title="Gemini">AI</span></span>
     <button class="btn" id="wake" aria-pressed="false"></button>
     <button class="btn" id="voice" aria-pressed="true"></button>
     <button class="btn" id="teachBtn" aria-pressed="false"></button>
@@ -204,15 +214,6 @@ body.pane-open .app{margin-right:min(58vw,900px);margin-left:max(0px,calc((100vw
     <label for="key"><span><span data-t="keyLabel"></span> <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">aistudio.google.com/apikey</a></span>
       <input id="key" type="password" autocomplete="off" placeholder="AIza… / AQ.…">
     </label>
-    <label class="chk" for="gimg"><input id="gimg" type="checkbox"> <span data-t="gimgLabel"></span></label>
-    <div class="row">
-      <label for="pkey"><span><span data-t="pkeyLabel"></span> <a href="https://enter.pollinations.ai" target="_blank" rel="noopener">enter.pollinations.ai</a></span>
-        <input id="pkey" type="password" autocomplete="off" placeholder="sk_… (optional)">
-      </label>
-      <label for="hkey"><span><span data-t="hkeyLabel"></span> <a href="https://aihorde.net/register" target="_blank" rel="noopener">aihorde.net</a></span>
-        <input id="hkey" type="password" autocomplete="off" placeholder="optional">
-      </label>
-    </div>
     <div class="row">
       <label for="lang"><span data-t="langLabel"></span>
         <select id="lang">
@@ -337,7 +338,7 @@ const T={
   wakeHint:"Dis « Qwentity » puis ta question",noSpeech:"Je n’ai rien entendu. Appuie et parle encore.",denied:"Le navigateur bloque le micro. Autorise-le (icône à gauche de l’adresse) et réessaie.",
   micErr:"Erreur de micro : ",noSR:"Ce navigateur ne reconnaît pas la parole. Ouvre le fichier dans Google Chrome ou Microsoft Edge.",
   needKey:"Il faut une clé Gemini. Ouvre « Réglages » et colle-la.",badKey:"La clé ne fonctionne pas. Vérifie-la dans « Réglages ».",quota:"La limite gratuite est atteinte pour l’instant. Attends une minute et réessaie.",offline:"Pas de connexion internet.",empty:"Réponse vide. Essaie de reformuler."},
- en:{whereBtn:"Where was this taken?",whereQ:"Where was this photo taken? Find the place.",wikiLoading:"Looking it up on Wikipedia…",place:"Place",confidence:"confidence",runMicro:"MicroPython: copy it to the board with Thonny (or the micro:bit editor) — or try it in Wokwi first.",teacher:"Teacher",boardLabel:"My board (for Arduino code)",attach:"Attach",lookAtThis:"Please look at this and help me.",tooBig:"File too big:",badType:"This file type is not supported:",runBtn:"▶ Run",running:"Running…",pyLoading:"Loading Python in your browser (first time ~10 s)…",pyHw:"This program uses hardware or a window (GPIO, serial, tkinter, pygame…). Download it and run it on your computer or board.",pyFail:"Couldn’t load Python in the browser:",wokwi:"Open in Wokwi",microbitBtn:"Open micro:bit editor",wokwiTip:"Code copied. In Wokwi: replace everything in the code tab and paste (Ctrl+V). If the answer has a diagram.json, paste it into the diagram.json tab too.",esp8266Tip:"Wokwi can’t simulate ESP8266/Kniwwelino. Upload with Arduino IDE (board: “LOLIN(WEMOS) D1 R2 & mini” or NodeMCU 1.0).",diagramTip:"Wokwi wiring: open the Wokwi project, click the diagram.json tab, replace everything and paste this.",exportChats:"⬇ Export chats",importChats:"⬆ Import",imported:"Imported {n} chats.",importBad:"This file is not a Qwentity chat export.",gimgLabel:"Gemini pictures (Nano Banana) — best quality, ~3 cents per picture, needs billing turned on for your Google key",stopBtn:"■ Stop",stopped:"Stopped.",writing:"writing",tapToDraw:"Picture not saved on this device — tap ↻ to draw it again.",pkeyLabel:"Pollinations key (optional, faster pictures):",hkeyLabel:"AI Horde key (optional, shorter queue):",again:"Another version",photoSearching:"Searching real photos…",photoNone:"No free photos found — have a look in Google Images.",moreGoogle:"More photos in Google Images",photoSaid:"Here are real photos.",improving:"Checking and improving the code…",improved:"✓ Code checked and improved",errBar:"Error in the program:",fix:"Fix it",fixPrompt:"The file {f} throws an error when it runs: {e}. Find the cause and send the full fixed file.",chats:"Chats",newChat:"+ New chat",untitled:"New chat",imgMaking:"Drawing… (free services: 10 s – 3 min)",imgSaid:"The picture is ready.",imgFail:"Couldn’t draw the picture. Tap ↻ to try again. Details:",prompt:"Prompt",codeTab:"Code",prevTab:"File",runPy:"Run: python ",runIno:"Open it in the Arduino IDE and upload it",runOther:"Download the file and open it in your program",bytes:"bytes",copy:"Copy",copied:"Copied",download:"Download",openCode:"Open code",lines:"lines",codeSaid:"The code is open in the window on the right.",name:"English",title:"QWENTITY",ready:"ready",writing:"writing",thinking:"thinking",speaking:"speaking",listening:"listening",waiting:"waiting for “Qwentity”",
+ en:{puterNote:"Free Puter account → the best picture models (Nano Banana 2, GPT Image, FLUX) and Claude for writing code. Everyone uses their own free monthly Puter allowance, no key needed. Works best when Qwentity is opened from a website (https).",brainLabel:"Brain",cmodelLabel:"Claude model",pimgLabel:"Picture model (Puter)",puterIn:"Connect Puter (free)",puterOut:"Disconnect",puterOn:"connected",puterOff:"not connected — pictures use free backup services",puterLoading:"loading Puter…",puterFail:"Couldn’t connect to Puter.",puterNoFunds:"Puter free allowance used up for this month",autoTest:"auto-test",whereBtn:"Where was this taken?",whereQ:"Where was this photo taken? Find the place.",wikiLoading:"Looking it up on Wikipedia…",place:"Place",confidence:"confidence",runMicro:"MicroPython: copy it to the board with Thonny (or the micro:bit editor) — or try it in Wokwi first.",teacher:"Teacher",boardLabel:"My board (for Arduino code)",attach:"Attach",lookAtThis:"Please look at this and help me.",tooBig:"File too big:",badType:"This file type is not supported:",runBtn:"▶ Run",running:"Running…",pyLoading:"Loading Python in your browser (first time ~10 s)…",pyHw:"This program uses hardware or a window (GPIO, serial, tkinter, pygame…). Download it and run it on your computer or board.",pyFail:"Couldn’t load Python in the browser:",wokwi:"Open in Wokwi",microbitBtn:"Open micro:bit editor",wokwiTip:"Code copied. In Wokwi: replace everything in the code tab and paste (Ctrl+V). If the answer has a diagram.json, paste it into the diagram.json tab too.",esp8266Tip:"Wokwi can’t simulate ESP8266/Kniwwelino. Upload with Arduino IDE (board: “LOLIN(WEMOS) D1 R2 & mini” or NodeMCU 1.0).",diagramTip:"Wokwi wiring: open the Wokwi project, click the diagram.json tab, replace everything and paste this.",exportChats:"⬇ Export chats",importChats:"⬆ Import",imported:"Imported {n} chats.",importBad:"This file is not a Qwentity chat export.",gimgLabel:"Gemini pictures (Nano Banana) — best quality, ~3 cents per picture, needs billing turned on for your Google key",stopBtn:"■ Stop",stopped:"Stopped.",writing:"writing",tapToDraw:"Picture not saved on this device — tap ↻ to draw it again.",pkeyLabel:"Pollinations key (optional, faster pictures):",hkeyLabel:"AI Horde key (optional, shorter queue):",again:"Another version",photoSearching:"Searching real photos…",photoNone:"No free photos found — have a look in Google Images.",moreGoogle:"More photos in Google Images",photoSaid:"Here are real photos.",improving:"Checking and improving the code…",improved:"✓ Code checked and improved",errBar:"Error in the program:",fix:"Fix it",fixPrompt:"The file {f} throws an error when it runs: {e}. Find the cause and send the full fixed file.",chats:"Chats",newChat:"+ New chat",untitled:"New chat",imgMaking:"Drawing… (free services: 10 s – 3 min)",imgSaid:"The picture is ready.",imgFail:"Couldn’t draw the picture. Tap ↻ to try again. Details:",prompt:"Prompt",codeTab:"Code",prevTab:"File",runPy:"Run: python ",runIno:"Open it in the Arduino IDE and upload it",runOther:"Download the file and open it in your program",bytes:"bytes",copy:"Copy",copied:"Copied",download:"Download",openCode:"Open code",lines:"lines",codeSaid:"The code is open in the window on the right.",name:"English",title:"QWENTITY",ready:"ready",writing:"writing",testing:"testing",thinking:"thinking",speaking:"speaking",listening:"listening",waiting:"waiting for “Qwentity”",
   wake:"“Qwentity”",on:"on",off:"off",voice:"Voice",settings:"Settings",wakeTip:"Keep listening for the word “Qwentity”",
   keyLabel:"Gemini API key (free):",langLabel:"Microphone language (I reply in the language you use)",modelLabel:"Model",aboutLabel:"Who we are (Qwentity will take this into account)",
   aboutPh:"For example: we are a makerspace in Luxembourg working with teens aged 12–15; we have laser cutters, 3D printers, a plotter and a podcast studio.",
@@ -403,9 +404,7 @@ function applyLang(){
 
 // ---------- настройки ----------
 if(!S.get("jv-lang-v2")){ S.set("jv-lang","en-US"); S.set("jv-lang-v2","1"); }
-try{ $("gimg").checked=S.get("jv-gimg")==="on"; }catch(e){}
-$("gimg").addEventListener("change",()=>S.set("jv-gimg",$("gimg").checked?"on":"off"));
-["key","lang","about","pkey","hkey","board"].forEach(id=>{ const v=S.get("jv-"+id); if(v!==null) $(id).value=v; $(id).addEventListener("input",()=>S.set("jv-"+id,$(id).value)); $(id).addEventListener("change",()=>S.set("jv-"+id,$(id).value)); });
+["key","lang","about","board"].forEach(id=>{ const v=S.get("jv-"+id); if(v!==null) $(id).value=v; $(id).addEventListener("input",()=>S.set("jv-"+id,$(id).value)); $(id).addEventListener("change",()=>S.set("jv-"+id,$(id).value)); });
 $("model").addEventListener("change",()=>S.set("jv-model",$("model").value));
 $("setBtn").onclick=()=>{ const s=$("settings"); s.hidden=!s.hidden; $("setBtn").setAttribute("aria-expanded",!s.hidden); };
 if(!$("key").value.trim()) $("key").value=DEFAULT_KEY;
@@ -444,7 +443,7 @@ function speak(text){
     if(!voiceOn||!window.speechSynthesis) return res();
     speechSynthesis.cancel();
     text=text.replace(/^\s*\|?\s*:?-{2,}.*$/gm,"").replace(/^\s*(---|\*\*\*)\s*$/gm,"");
-    text=text.replace(/```(wiki|place)[\s\S]*?(```|$)/g," ");
+    text=text.replace(/```(wiki|place|mermaid)[\s\S]*?(```|$)/g," ").replace(/\$\$|\\[()\[\]]/g," ");
     const clean=text.replace(/```photo[\s\S]*?(```|$)/g," "+t("photoSaid")+" ").replace(/```image[\s\S]*?(```|$)/g," "+t("imgSaid")+" ").replace(/```[\s\S]*?(```|$)/g," "+t("codeSaid")+" ").replace(/https?:\/\/\S+/g,"").replace(/\[(.*?)\]\(.*?\)/g,"$1").replace(/[*#`_>|]/g,"");
     const parts=(clean.match(/[^.!?…\n]+[.!?…]*\s*/g)||[clean]).reduce((acc,s)=>{ const last=acc[acc.length-1]; if(last&&(last+s).length<180) acc[acc.length-1]=last+s; else acc.push(s); return acc; },[]).map(s=>s.trim()).filter(Boolean);
     const short=detectLang(clean), full=SPEECH[short]||"en-US";
@@ -568,149 +567,13 @@ function renderPhotos(el,q){
     });
   });
 }
-// ---------- генерация картинок: несколько бесплатных сервисов по очереди ----------
-const IMG_SIZES={square:[1024,1024],wide:[1344,768],tall:[768,1344]};
-const HORDE_SIZES={square:[1024,1024],wide:[1216,704],tall:[704,1216]};
-const HORDE="https://aihorde.net/api/v2";
-// кэш готовых картинок в браузере (IndexedDB), чтобы они не пропадали после перезагрузки
-const imgDB=(()=>{ let pr=null;
-  const open=()=>pr||(pr=new Promise((res,rej)=>{ try{ const r=indexedDB.open("qwentity-img",1); r.onupgradeneeded=()=>r.result.createObjectStore("img"); r.onsuccess=()=>res(r.result); r.onerror=()=>rej(r.error); }catch(e){ rej(e); } }));
-  return {
-    async get(k){ try{ const db=await open(); return await new Promise(res=>{ const q=db.transaction("img").objectStore("img").get(k); q.onsuccess=()=>res(q.result||null); q.onerror=()=>res(null); }); }catch(e){ return null; } },
-    async put(k,v){ try{ const db=await open(); db.transaction("img","readwrite").objectStore("img").put(v,k); }catch(e){} }
-  }; })();
-function imgKey(p){ return p.seed+"|"+p.size+"|"+p.prompt.slice(0,300); }
-function sleep(ms,signal){ return new Promise((res,rej)=>{ const tm=setTimeout(res,ms); if(signal) signal.addEventListener("abort",()=>{ clearTimeout(tm); rej(new Error("cancelled")); },{once:true}); }); }
-async function widthOf(blob){ try{ const b=await createImageBitmap(blob); const w=b.width; b.close&&b.close(); return w; }catch(e){ return 0; } }
-// без CORS: просто ждём, загрузится ли <img>; проверяем размер, чтобы не принять «заглушку»
-function loadViaImg(url, w, timeout){
-  return new Promise((res,rej)=>{ const im=new Image(); im.referrerPolicy="no-referrer";
-    const tm=setTimeout(()=>{ im.src=""; rej(new Error("timeout")); },timeout);
-    im.onload=()=>{ clearTimeout(tm); if(w&&Math.abs(im.naturalWidth-w)>64) rej(new Error("got a placeholder, not a picture")); else res(url); };
-    im.onerror=()=>{ clearTimeout(tm); rej(new Error("failed to load")); };
-    im.src=url; });
-}
-async function fetchBlob(url, opts, timeout, w){
-  const c=new AbortController(); const tm=setTimeout(()=>c.abort(),timeout);
-  try{
-    const r=await fetch(url,Object.assign({},opts,{signal:c.signal}));
-    if(!r.ok){ let msg=""; try{ msg=(await r.text()).replace(/\s+/g," ").slice(0,100); }catch(e){} throw new Error("HTTP "+r.status+(msg?" "+msg:"")); }
-    const b=await r.blob();
-    if(!/^image\//.test(b.type)) throw new Error("not an image");
-    if(w){ const bw=await widthOf(b); if(bw&&Math.abs(bw-w)>64) throw new Error("got a placeholder, not a picture"); }
-    return b;
-  }catch(e){ if(c.signal.aborted) throw new Error("timeout"); throw e; }
-  finally{ clearTimeout(tm); }
-}
-let gImgModels=null;
-async function geminiImageModels(key){
-  if(gImgModels) return gImgModels;
-  let names=[];
-  try{ const r=await fetch(API+"/models?pageSize=200",{headers:{"x-goog-api-key":key}}); const j=await r.json();
-    names=(j.models||[]).filter(m=>(m.supportedGenerationMethods||[]).includes("generateContent")).map(m=>m.name.replace("models/","")).filter(n=>/image/.test(n)&&!/imagen|tts|edit/.test(n)); }catch(e){}
-  const score=n=>(/flash/.test(n)?50:0)+(/lite/.test(n)?10:0)-(/pro/.test(n)?30:0)+(/preview/.test(n)?-5:0)+(parseFloat((n.match(/gemini-(\d+(\.\d+)?)/)||[0,0])[1])||0);
-  names.sort((a,b)=>score(b)-score(a));
-  if(!names.length) names=["gemini-3.1-flash-lite-image","gemini-3.1-flash-image","gemini-2.5-flash-image"];
-  return gImgModels=names.slice(0,4);
-}
-const IMG_PROVIDERS={
-  // 0) Gemini «Nano Banana» — надёжно и красиво, но платно (~3 цента), нужен billing на ключе
-  geminiImg:{ label:"Gemini (Nano Banana)", when:()=>$("gimg").checked&&!!$("key").value.trim(),
-    async run(p,info,signal){
-      const key=$("key").value.trim(); let last="";
-      const shape=p.size==="wide"?" Wide 16:9 landscape format.":p.size==="tall"?" Tall 9:16 portrait format.":" Square format.";
-      for(const m of await geminiImageModels(key)){
-        info(m);
-        const r=await fetch(API+"/models/"+encodeURIComponent(m)+":generateContent",{method:"POST",signal,headers:{"Content-Type":"application/json","x-goog-api-key":key},
-          body:JSON.stringify({contents:[{role:"user",parts:[{text:"Generate an image: "+p.prompt+shape}]}],generationConfig:{responseModalities:["TEXT","IMAGE"]}})});
-        const j=await r.json().catch(()=>({}));
-        if(!r.ok){ const msg=(j.error&&j.error.message)||""; last=m+": "+r.status+(r.status===429&&/limit: ?0|free/i.test(msg)?" (needs billing on your Google key)":" "+msg.slice(0,60)); if(r.status===400&&/API key/i.test(msg)) break; continue; }
-        const parts=(((j.candidates||[])[0]||{}).content||{}).parts||[];
-        const im=parts.find(x=>x.inlineData||x.inline_data);
-        if(!im){ last=m+": no image (maybe blocked by safety filter)"; continue; }
-        const d=im.inlineData||im.inline_data;
-        return {blob:await (await fetch("data:"+(d.mimeType||d.mime_type||"image/png")+";base64,"+d.data)).blob()};
-      }
-      throw new Error(last||"no Gemini image model");
-    } },
-  // 1) Pollinations со своим ключом (enter.pollinations.ai) — быстрее и лучше
-  pollinationsKey:{ label:"Pollinations (your key)", when:()=>!!$("pkey").value.trim(),
-    async run(p){ const [w,hh]=IMG_SIZES[p.size]||IMG_SIZES.square, k=$("pkey").value.trim();
-      const url="https://gen.pollinations.ai/image/"+encodeURIComponent(p.prompt.slice(0,900))+"?model=flux&width="+w+"&height="+hh+"&seed="+p.seed+"&nologo=true";
-      try{ return {blob:await fetchBlob(url,{headers:{Authorization:"Bearer "+k}},120000)}; }
-      catch(e){ if(/HTTP|timeout/.test(e.message)) throw e; return {url:await loadViaImg(url+"&key="+encodeURIComponent(k),0,120000)}; } } },
-  // 2) старый бесплатный адрес Pollinations (без ключа; может не работать)
-  pollinations:{ label:"Pollinations (free)", when:()=>true,
-    async run(p){ const [w,hh]=IMG_SIZES[p.size]||IMG_SIZES.square;
-      const url="https://image.pollinations.ai/prompt/"+encodeURIComponent(p.prompt.slice(0,900))+"?width="+w+"&height="+hh+"&nologo=true&model=flux&seed="+p.seed;
-      try{ return {blob:await fetchBlob(url,{},60000,w)}; }
-      catch(e){ if(/HTTP|timeout|placeholder/.test(e.message)) throw e; return {url:await loadViaImg(url,w,60000)}; } } },
-  // 3) AI Horde — бесплатная сеть добровольцев, без ключа (бывает очередь)
-  horde:{ label:"AI Horde (free)", when:()=>true,
-    async run(p,info,signal){
-      const [w,hh]=HORDE_SIZES[p.size]||HORDE_SIZES.square, CA="Qwentity:1.1:base1";
-      const H={"Content-Type":"application/json","apikey":($("hkey").value.trim()||"0000000000"),"Client-Agent":CA};
-      const body={prompt:p.prompt+" ### text, watermark, signature, blurry, deformed, ugly, low quality",
-        params:{width:w,height:hh,steps:20,n:1,sampler_name:"k_euler_a",cfg_scale:6,karras:true,seed:String(p.seed)},
-        nsfw:false,censor_nsfw:true,trusted_workers:false,slow_workers:true,r2:true,shared:false,
-        models:["AlbedoBase XL (SDXL)","Juggernaut XL","DreamShaper XL","Flux.1-Schnell fp8 (Compact)"]};
-      const submit=async b=>{ const r=await fetch(HORDE+"/generate/async",{method:"POST",headers:H,body:JSON.stringify(b),signal}); const j=await r.json().catch(()=>({})); return {r,j}; };
-      let {r,j}=await submit(body);
-      if(!j.id){ delete body.models; body.params.width=body.params.height=512; ({r,j}=await submit(body)); }   // запасной вариант: любая модель, меньше размер
-      if(!j.id) throw new Error("HTTP "+r.status+" "+String(j.message||"").slice(0,100));
-      let id=j.id, t0=Date.now(), light=!body.models;
-      const G={headers:{"Client-Agent":CA},signal};
-      const cancel=x=>fetch(HORDE+"/generate/status/"+x,{method:"DELETE",headers:{"Client-Agent":CA}}).catch(()=>{});
-      for(;;){
-        await sleep(3000,signal);
-        const c=await (await fetch(HORDE+"/generate/check/"+id,G)).json().catch(()=>({}));
-        if(c.faulted) throw new Error("worker failed");
-        if(c.is_possible===false) throw new Error("no free worker can do this right now");
-        if(c.done) break;
-        const wait=+c.wait_time||0;
-        // длинная очередь для больших моделей — пробуем лёгкую быструю модель
-        if(!light&&wait>150){
-          cancel(id); light=true; info("queue ~"+Math.round(wait/60)+" min → trying a lighter, faster model");
-          const LS={square:[512,512],wide:[768,448],tall:[448,768]}[p.size]||[512,512];
-          delete body.models; body.params.width=LS[0]; body.params.height=LS[1];
-          ({r,j}=await submit(body)); if(!j.id) throw new Error("HTTP "+r.status+" "+String(j.message||"").slice(0,80));
-          id=j.id; t0=Date.now(); continue;
-        }
-        if(light&&wait>360){ cancel(id); throw new Error("too busy right now (queue ~"+Math.round(wait/60)+" min)"); }
-        if(Date.now()-t0>300000){ cancel(id); throw new Error("too slow (5 min)"); }
-        info(c.queue_position>0 ? "queue #"+c.queue_position+", ~"+(wait||"?")+"s" : "drawing, ~"+(wait||"?")+"s");
-      }
-      const s=await (await fetch(HORDE+"/generate/status/"+id,G)).json().catch(()=>({}));
-      const g=(s.generations||[])[0];
-      if(!g||!g.img) throw new Error("empty result");
-      if(g.censored) throw new Error("blocked by the safety filter");
-      if(!/^https?:/.test(g.img)) return {blob:await (await fetch("data:image/webp;base64,"+g.img)).blob()};
-      try{ return {blob:await fetchBlob(g.img,{},30000)}; }catch(e){ return {url:g.img}; }
-    } }
-};
-async function makeImage(p, box){
-  const k=imgKey(p);
-  const cached=await imgDB.get(k);
-  if(cached&&cached.blob) return {src:URL.createObjectURL(cached.blob),provider:cached.provider};
-  let order=["geminiImg","pollinationsKey","pollinations","horde"].filter(n=>IMG_PROVIDERS[n].when());
-  const pref=S.get("jv-imgprov");      // сначала тот сервис, который сработал в прошлый раз
-  if(pref&&!/geminiImg|pollinationsKey/.test(pref)&&order.includes(pref)&&!$("pkey").value.trim()&&!$("gimg").checked) order=[pref,...order.filter(n=>n!==pref)];
-  const errs=[];
-  for(const name of order){
-    const prov=IMG_PROVIDERS[name], st=step("picture · "+prov.label, box);
-    try{
-      const r=await prov.run(p, d=>st.info(d));
-      st.done(); S.set("jv-imgprov",name);
-      if(r.blob){ imgDB.put(k,{blob:r.blob,provider:prov.label}); return {src:URL.createObjectURL(r.blob),provider:prov.label}; }
-      return {src:r.url,provider:prov.label};
-    }catch(e){ const m=String((e&&e.message)||e).slice(0,90); st.fail(m); errs.push(prov.label+": "+m); }
-  }
-  const hint=($("gimg").checked||$("pkey").value.trim())?"":" — Free picture services are overloaded. For reliable pictures open Settings: turn on “Gemini pictures” or add a Pollinations key.";
-  throw new Error(errs.join(" · ")+hint);
-}
+const _scripts={};
+function loadScript(src){ return _scripts[src]||(_scripts[src]=new Promise((res,rej)=>{ const s=document.createElement("script"); s.src=src; s.onload=()=>res(); s.onerror=()=>{ delete _scripts[src]; rej(new Error("couldn't load "+src.split("/")[2])); }; document.head.append(s); })); }
+function loadCss(href){ if(document.querySelector('link[href="'+href+'"]')) return; const l=document.createElement("link"); l.rel="stylesheet"; l.href=href; document.head.append(l); }
+// Всё работает только на бесплатном Gemini
+function pickBrain(){ return "gemini"; }
+function generateWith(brain, key, signal, out, contents, searchModes, onText){ return generate(key, signal, out, contents, searchModes, onText); }
 function addSeeds(text){ return text.replace(/```image[^\S\n]*([^\n]*)\n/g,(m,info)=>/seed=\d+/.test(info)?m:"```image "+(info.match(/size=\w+/)||[""])[0]+" seed="+Math.floor(Math.random()*1e9)+"\n"); }
-const imgJobs={};
-function getImage(p,box){ const k=imgKey(p); return imgJobs[k]||(imgJobs[k]=makeImage(p,box).catch(e=>{ delete imgJobs[k]; throw e; })); }
 async function downloadImage(c){
   try{ const r=await fetch(c.url); const b=await r.blob(); const a=document.createElement("a"); a.href=URL.createObjectURL(b); a.download=c.name; document.body.append(a); a.click(); setTimeout(()=>{URL.revokeObjectURL(a.href); a.remove();},1000); }
   catch(e){ if(c.url) window.open(c.url,"_blank","noopener"); }
@@ -722,6 +585,7 @@ function splitAnswer(text){
   const parts=[]; const re=/```([\w+#.-]*)[ \t]*([^\n]*)\n([\s\S]*?)(```|$)/g; let last=0,m;
   while((m=re.exec(text))){ if(m.index>last) parts.push({type:"text",text:text.slice(last,m.index)}); { const lang=(m[1]||"text").toLowerCase();
     if(lang==="photo"){ parts.push({type:"photo",query:m[3].trim().split("\n")[0]}); last=re.lastIndex; continue; }
+    if(lang==="mermaid"){ parts.push({type:"diagram",code:m[3].trim()}); last=re.lastIndex; continue; }
     if(lang==="wiki"){ const ln=m[3].trim().split("\n"), tt=ln[0].replace(/^["']|["']$/g,"").trim(); if(tt) parts.push({type:"wiki",title:tt,ctx:(ln[1]||"").replace(/^context:\s*/i,"").trim()}); last=re.lastIndex; continue; }
     if(lang==="place"){ const pl=parsePlace(m[3]); if(pl) parts.push(Object.assign({type:"place"},pl)); last=re.lastIndex; continue; }
     if(lang==="image"){ const seed=((m[2].match(/seed=(\d+)/)||[])[1])||"1"; const size=((m[2].match(/size=(square|wide|tall)/)||[])[1])||"square"; const pr=m[3].trim().replace(/\s+/g," "); parts.push({type:"image",lang:"image",prompt:pr,code:pr,seed,size,url:"",name:"qwentity-"+seed+".jpg"}); last=re.lastIndex; continue; }
@@ -730,6 +594,29 @@ function splitAnswer(text){
   return parts;
 }
 function canPreview(c){ return ["html","svg","xml"].includes(c.lang)&&/<(html|body|div|svg|canvas|script|h1|p)\b/i.test(c.code) || (c.lang==="html"); }
+// ---------- схемы (Mermaid) и формулы (KaTeX) ----------
+let mmId=0, mmInit=false;
+async function renderMermaid(box, code){
+  box.textContent="…";
+  const id="mm"+(++mmId);
+  try{
+    await loadScript("https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js");
+    if(!mmInit){ window.mermaid.initialize({startOnLoad:false,theme:"dark",securityLevel:"strict",fontFamily:"Manrope, system-ui, sans-serif"}); mmInit=true; }
+    const r=await window.mermaid.render(id, code);
+    box.innerHTML=r.svg;
+  }catch(e){
+    const stray=document.getElementById("d"+id); if(stray) stray.remove();
+    box.textContent=""; const pre=document.createElement("pre"); pre.className="mm-fallback"; pre.textContent=code; box.append(pre);
+  }
+}
+async function renderMath(el){
+  try{
+    loadCss("https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css");
+    await loadScript("https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js");
+    await loadScript("https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js");
+    window.renderMathInElement(el,{delimiters:[{left:"$$",right:"$$",display:true},{left:"\\[",right:"\\]",display:true},{left:"\\(",right:"\\)",display:false}],throwOnError:false});
+  }catch(e){}
+}
 // ---------- безопасный Markdown → HTML ----------
 function esc(s){ return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
 function inlineMd(s){
@@ -892,45 +779,10 @@ function renderAnswer(el, text, autoOpen=true, question=""){
   for(const p of all){
     if(p.type==="wiki") continue;
     if(p.type==="place"){ el.append(placeCard(p)); continue; }
-    if(p.type==="text"){ const s=p.text.replace(/^\n+|\n+$/g,""); if(s){ const d=document.createElement("div"); d.className="md"; d.innerHTML=mdToHtml(s); el.append(d); } continue; }
+    if(p.type==="text"){ const s=p.text.replace(/^\n+|\n+$/g,""); if(s){ const d=document.createElement("div"); d.className="md"; d.innerHTML=mdToHtml(s); el.append(d); if(/\$\$|\\\(|\\\[/.test(s)) renderMath(d); } continue; }
+    if(p.type==="diagram"){ const box=document.createElement("div"); box.className="diagram"; el.append(box); renderMermaid(box,p.code); continue; }
     if(p.type==="photo"){ renderPhotos(el,p.query); continue; }
-    if(p.type==="image"){
-      const card=document.createElement("button"); card.type="button"; card.className="img-card";
-      const [pw,ph]=IMG_SIZES[p.size]||IMG_SIZES.square;
-      const holder=document.createElement("div"); holder.className="ph"; holder.style.aspectRatio=pw+"/"+ph;
-      const img=document.createElement("img"); img.alt=p.prompt; img.hidden=true;
-      const cap=document.createElement("div"); cap.className="cap"; const ct=document.createElement("span"); cap.append(ct);
-      const dl=document.createElement("span"); dl.className="dl"; dl.setAttribute("role","button"); dl.tabIndex=0; dl.textContent=t("download"); dl.hidden=true;
-      dl.onclick=e=>{ e.stopPropagation(); downloadImage(p); };
-      dl.onkeydown=e=>{ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); e.stopPropagation(); downloadImage(p); } };
-      const again=document.createElement("span"); again.className="again"; again.setAttribute("role","button"); again.tabIndex=0; again.textContent="↻ "+t("again"); again.hidden=true;
-      cap.append(again,dl);
-      const box=el.parentElement&&el.parentElement.querySelector(".trace");
-      const draw=()=>{
-        ct.textContent=t("imgMaking"); dl.hidden=true; again.hidden=true; img.hidden=true; holder.hidden=false; holder.classList.add("loading");
-        health("hImg","run");
-        getImage(p,box).then(r=>{
-          p.url=r.src; img.src=r.src; img.hidden=false; holder.hidden=true; holder.classList.remove("loading");
-          ct.textContent=p.prompt; ct.title=r.provider; dl.hidden=false; again.hidden=false;
-          health("hImg","ok","Images: "+r.provider);
-          if(current===p){ $("imgBig").src=r.src; }
-        }).catch(e=>{
-          holder.classList.remove("loading");
-          ct.textContent=t("imgFail")+" "+String(e.message||e).slice(0,420); again.hidden=false;
-          health("hImg","err","Images: "+String(e.message||e).slice(0,120));
-        });
-      };
-      const reroll=e=>{ e.stopPropagation();
-        const ns=String(Math.floor(Math.random()*1e9)), old="seed="+p.seed;
-        cur().turns.forEach(tr=>tr.parts.forEach(pt=>{ if(pt.text&&pt.text.includes(old)) pt.text=pt.text.replace(old,"seed="+ns); })); saveChats();
-        p.seed=ns; p.url=""; p.name="qwentity-"+ns+".jpg"; draw();
-      };
-      again.onclick=reroll; again.onkeydown=e=>{ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); reroll(e); } };
-      // новый ответ — рисуем сразу; старый чат — берём из кэша, а без кэша ждём нажатия (не тратим лимит)
-      if(autoOpen) draw();
-      else imgDB.get(imgKey(p)).then(c=>{ if(c&&c.blob) draw(); else { ct.textContent=t("tapToDraw"); again.hidden=false; } });
-      card.append(holder,img,cap); card.onclick=()=>openPane(p); el.append(card); lastCode=p; continue;
-    }
+    if(p.type==="image"){ const n=document.createElement("div"); n.className="photo-note"; n.textContent="🎨 "+p.prompt; el.append(n); continue; }
     const b=document.createElement("button"); b.type="button"; b.className="code-chip";
     const ic=document.createElement("span"); ic.className="ic"; ic.textContent="</>";
     const tx=document.createElement("span"); tx.className="nm"; tx.textContent=p.name; const meta=document.createElement("span"); meta.className="meta"; meta.textContent=p.lang+" · "+p.code.split("\n").length+" "+t("lines"); tx.append(meta);
@@ -1103,11 +955,7 @@ function systemText(){
   "PICTURES — two different tools, choose carefully: "+
   "(A) REAL photos: when the user wants to SEE something that really exists (a real coin, banknote, stamp, building, place, animal, person, product, device, board, logo, event, 'show me how X looks'), NEVER invent a picture. "+
   "First use Google Search to find the facts, describe what it really looks like in 2–4 sentences, then add a fenced block ```photo containing ONE short precise search query in English (e.g. 'Luxembourg 2 euro commemorative coin 2026'). The page will search real photos with it. "+
-  "(B) GENERATED pictures: ONLY when the user asks you to draw, create, generate, imagine or design something new, reply with one short sentence and a fenced block ```image with the size on the opening line (```image size=square, size=wide or size=tall) and ONE prompt IN ENGLISH on the next line. "+
-  "How to write a GOOD image prompt (the image model is simple and literal): 25–60 words; start with the main subject in plain words; ONE clear subject or a simple scene with at most 2–3 objects; say the exact style (e.g. 'photorealistic photo, 50mm lens', 'clean flat vector illustration', 'Pixar-style 3D render', 'watercolor painting', 'pixel art'); then setting, lighting, colours and camera angle. "+
-  "AVOID things these models draw badly: any written text, letters, numbers, logos with words, labels or captions (write 'no text' at the end); many people; complex hands; crowded scenes; abstract ideas — turn ideas into concrete visible things. Never put the user’s language in the prompt, only English. "+  "IMPORTANT ROUTING: if the user says draw / create / generate / make / imagine a picture or image (нарисуй, создай, сгенерируй картинку, dessine, crée une image, disegna, zeichne…), ALWAYS use (B) and ALWAYS output the ```image block — even when the subject is a real place, object or a real public figure doing something fictional. "+
-  "For a real, identifiable person in (B): use a clearly illustrated, non-photographic style (cartoon, caricature, comic, oil painting) — never photorealistic — and nothing humiliating, sexual or violent. "+
-  "Use (A) only when the user wants to SEE how something real actually looks. If unsure, treat it as real (A). Never say you cannot show or make images. "+
+  "(B) This app does NOT generate AI pictures. If the user asks you to draw, create or design a picture, logo, icon, poster or illustration, draw it yourself as clean vector art: ONE complete ```html file (e.g. ```html drawing.html) containing an inline <svg> with a viewBox, nice colours and gradients, centred on a simple background — it shows live in the File tab. Keep it charming and simple (shapes, not photorealism). For real people, draw a friendly stylised cartoon, never a realistic face. If they wanted a real photo of something that exists, use (A). "+
   "CODING STANDARD (very important): you write code like a senior engineer. Before writing, silently plan the structure, data, controls and edge cases. "+
   "The code must be COMPLETE and run on the first try: no placeholders, no '...', no 'TODO', no missing imports or functions, every variable defined, valid syntax. "+
   "Implement EVERYTHING the user asked for, plus the obvious things a good version needs (e.g. for games: start screen, score, restart, increasing difficulty, keyboard AND touch controls, sound only after a click, smooth requestAnimationFrame loop, resizing). "+
@@ -1117,12 +965,44 @@ function systemText(){
   "For Python: standard library where possible; if a package is needed, say the pip install command in one sentence. "+
   "When the user asks to change or fix code from earlier in the chat, always output the FULL updated file, never only a fragment. "+
   "For anything visual or interactive (games, web pages, animations, calculators) prefer ONE self-contained HTML file with inline CSS and JS in a ```html block, so it can be previewed live. "+
+  HTML_RULES+LANG_RULES+EXPLAIN_RULES+
   "Answer simple questions briefly. When asked for ideas, advice or a plan, think properly: no generic ideas from typical lists — only original, concrete, doable ones. "+
   "For project ideas (e.g. for the Jonk Fuerscher / FJSL contest in Luxembourg) give for each: the research question or what is new, what to build or program, what to measure, and why it impresses a jury. Prefer 3–4 strong ideas over 10 weak ones. "+
   "Use Google Search for news and current facts. Today is "+new Date().toISOString().slice(0,10)+". "+
   (teach?TEACH_RULES:"")+
   (about?"Who is asking: "+about:"")+self;
 }
+// ---------- стандарт для HTML-программ ----------
+const HTML_RULES="HTML APPS & GAMES — PROFESSIONAL STANDARD: Before the code, write a short **Plan** (4–7 bullets: features, controls, how it looks). "+
+  "Then ONE complete file: <!DOCTYPE html>, <meta charset> and viewport, semantic HTML, all CSS in <style>, all JS in one <script> at the end of <body>. "+
+  "DESIGN: a deliberate colour palette in CSS variables, a nice font stack (system-ui or one Google Font with fallback), generous spacing, rounded corners, soft shadows, smooth transitions, hover/focus states, responsive layout that works on phone and desktop, readable contrast. It must look like a polished product, not a demo. "+
+  "JS QUALITY: 'use strict'; one clear state object; small named functions; no global variable leaks; no undefined variables; guard every DOM lookup; wrap localStorage in try/catch; never use alert()/prompt() for gameplay; listen to keyboard AND mouse AND touch/pointer events; handle window resize; for canvas use devicePixelRatio for sharp graphics. "+
+  "GAMES: start screen with title and controls, requestAnimationFrame loop with delta time (same speed on every computer), pause (P/Esc), score and high score saved in localStorage, increasing difficulty, game over screen with restart (R/Space/tap), fair collision detection, juicy feedback (particles, screen shake, colour flash), sound effects generated with the Web Audio API started only after the first user click, mobile touch controls. "+
+  "NO external images or sound files — draw with canvas, SVG, CSS or emoji. No libraries unless really needed (then only from cdnjs or jsdelivr with an exact version). "+
+  "After the code: **How to use** (controls in 2–4 bullets) and **Ideas to extend** (3 concrete ideas). The code is automatically run and tested; write it so it runs without errors on the first try. ";
+// ---------- стандарты для каждого языка ----------
+const LANG_RULES="LANGUAGE STANDARDS — follow the one for the language you write. "+
+  "C++ FOR ARDUINO / ESP: it must compile on the first try in Arduino IDE 2 for the chosen board. Start with a comment block: board, wiring summary, libraries (exact Library Manager names). #include every library you use. Name pins with constants (const uint8_t LED_PIN = 13;). "+
+  "Use unsigned long for millis()/micros() and compare with subtraction (if (millis() - lastTick >= INTERVAL)) so it survives overflow. Replace long delay() with non-blocking timing or a small state machine (enum class State). "+
+  "Buttons: INPUT_PULLUP + 30–50 ms debounce. Interrupts: keep ISRs tiny, shared variables volatile. Every pin used with digitalWrite gets pinMode(…, OUTPUT) in setup(); every Serial use needs Serial.begin(115200). "+
+  "On Uno/Nano (AVR): analogWrite only on PWM pins 3, 5, 6, 9, 10, 11; save RAM with F(\"…\") in Serial.print; avoid String concatenation inside loop() (use char buffers + snprintf). ESP32: GPIO 34–39 are input-only, never use GPIO 6–11, ADC2 pins don't work while WiFi is on, 3.3 V logic. "+
+  "Split into small functions (readSensors(), updateOutputs(), handleButtons(), printStatus()) and keep loop() short and readable. Useful Serial debug messages. "+
+  "PYTHON: Python 3.11+, standard library first (say the pip install line if a package is needed). Structure: constants in UPPER_CASE, functions with type hints and one-line docstrings, def main() and if __name__ == \"__main__\": main(). f-strings, pathlib for files, csv/json modules for data. "+
+  "Validate user input in a loop with friendly messages; try/except only around things that can really fail (files, network, int(input())) with a helpful message — never a bare except. No global mutable state. PEP 8 / black style. "+
+  "MicroPython (Pico/ESP32/micro:bit): from machine import Pin, time.ticks_ms()/ticks_diff() for timing, no CPython-only modules. "+
+  "JAVASCRIPT: modern ES2022, 'use strict' or ES modules; const by default, let only when reassigned, never var; no global leaks; small pure functions; async/await with try/catch around fetch and show errors in the UI; requestAnimationFrame for animation; event delegation; never alert()/prompt() for normal flow; JSDoc on the main functions. For a standalone .js file, say how to run it (browser <script> or node file.js). "+
+  "CSS: design tokens in :root custom properties (colours, spacing, radius, fonts, shadows); mobile-first with flexbox/grid and gap; fluid type with clamp(); dark mode with prefers-color-scheme; visible :focus-visible styles; respect prefers-reduced-motion; animate transform/opacity only; low specificity (classes, BEM-style names, no IDs for styling, no !important); WCAG AA contrast. "+
+  "Every program is checked automatically after you write it (HTML is run in a browser with clicks and key presses and at phone width, Arduino sketches go through a linter for the chosen board, Python is executed, JS/CSS/JSON are parsed), so write code that passes on the first try. ";
+// ---------- стандарт для объяснений ----------
+const EXPLAIN_RULES="EXPLANATIONS — make them genuinely excellent, like the best teacher the user ever had: "+
+  "1) Start with the **direct answer in one or two sentences** (bold the key idea). "+
+  "2) **How it works**: simple words first, then add precision; use one vivid everyday analogy (kitchen, football, traffic, makerspace tools). "+
+  "3) When there is a process, structure, cause-and-effect chain, timeline, comparison or circuit logic, ADD A DIAGRAM as a fenced ```mermaid block (flowchart TD/LR, sequenceDiagram or timeline; short labels in quotes, max ~12 nodes). "+
+  "4) A **concrete example** with real numbers, a mini experiment, or a tiny code snippet. "+
+  "5) Formulas in LaTeX: inline with \\( … \\), display on ONE line with $$ … $$; always say what each symbol means and give units. "+
+  "6) **Common mistakes** (2–3 bullets) when people often get it wrong. "+
+  "7) End with **In short:** one sentence, and optionally one quick question to check understanding. "+
+  "Use ### headings, bold key terms, short paragraphs, tables for comparisons. Scale to the question: a simple question gets a short answer (skip sections that add nothing); a 'why/how' or study question gets the full structure. Be accurate — if something is uncertain or debated, say so. ";
 // ---------- режим «Учитель» ----------
 const TEACH_RULES="TEACHER MODE IS ON: the user is a student (about 12–18) who wants to LEARN. Do NOT give the complete solution or full program at once. "+
   "Explain the idea in simple words, split the task into small steps, give ONE step at a time with at most a short code fragment (max ~10 lines) for that step, then ask ONE guiding question or a mini-task and wait. "+
@@ -1223,7 +1103,144 @@ async function generate(key, signal, out, contents, searchModes=[true,false], on
 
 // Второй проход: Qwentity сам проверяет и улучшает свой код
 const REVIEW="Act as a strict senior engineer reviewing the code you just wrote. Mentally run it line by line. Find and fix: syntax errors, runtime errors, undefined variables, missing imports, logic bugs, unfinished parts, anything from my request that is missing or done poorly, bad UX or ugly design, edge cases. Then improve it further so it is clearly better. "+
+  "Language checklist: Arduino C++ — compile it mentally for the chosen board (includes, types, unsigned long for millis(), pinMode for every output, Serial.begin, PWM-capable pins, ESP32 input-only pins, RAM/String use); Python — run it mentally with normal and edge-case inputs (empty input, wrong type, zero, big numbers), check every name is defined; JS — check every DOM lookup, event handler and async error path; CSS — check phone width, dark mode, focus styles. "+
   "Output ONLY the complete improved answer in the same structure and language as before: keep every section (parts, wiring table, libraries, upload steps) and give the COMPLETE final version of EVERY file, each in its own fenced block with the same language and file name on the opening line. No diff, no list of changes.";
+const FIX_INSTR=errs=>"Your code was just checked automatically (HTML pages are run in a browser where the tester clicks buttons and presses Space/arrow keys/Enter, and again at phone width; Arduino sketches go through a linter for the chosen board; Python is executed; JS/CSS/JSON are parsed) and these problems were found:\n- "+errs.join("\n- ")+
+  "\nFind the ROOT CAUSE of each error and fix it properly (do not hide errors with try/catch). Check every function and variable that could be undefined. "+
+  "Output ONLY the complete corrected answer in the same structure and language as before, with the COMPLETE final version of every file, each in its own fenced block with the same language and file name. No diff, no list of changes.";
+// ---------- автопроверка: Arduino ----------
+function lintArduino(code, board){
+  const iss=[];
+  const src=code.replace(/\/\*[\s\S]*?\*\//g,"").replace(/\/\/.*$/gm,"");
+  const ns=src.replace(/"(?:\\.|[^"\\\n])*"|'(?:\\.|[^'\\\n])*'/g,'""');
+  if(!/\bvoid\s+setup\s*\(/.test(ns)) iss.push("missing void setup()");
+  if(!/\bvoid\s+loop\s*\(/.test(ns)) iss.push("missing void loop()");
+  const bal=(o,c)=>ns.split(o).length-ns.split(c).length;
+  if(bal("{","}")) iss.push("unbalanced { } braces ("+(bal("{","}")>0?"missing }":"extra }")+")");
+  if(bal("(",")")) iss.push("unbalanced ( ) parentheses");
+  const LIBS=[[/\bServo\b/,"Servo.h"],[/\bWire\.\w/,"Wire.h"],[/\bSPI\.\w/,"SPI.h"],[/\bLiquidCrystal_I2C\b/,"LiquidCrystal_I2C.h"],[/\bLiquidCrystal\s+\w+\s*\(/,"LiquidCrystal.h"],
+    [/\bAdafruit_NeoPixel\b/,"Adafruit_NeoPixel.h"],[/\bDHT\s+\w+\s*\(/,"DHT.h"],[/\bAdafruit_SSD1306\b/,"Adafruit_SSD1306.h"],[/\bSoftwareSerial\b/,"SoftwareSerial.h"],
+    [/\bEEPROM\.\w/,"EEPROM.h"],[/\bMFRC522\b/,"MFRC522.h"],[/\bStepper\s+\w+\s*\(/,"Stepper.h"],[/\bCRGB\b|\bFastLED\./,"FastLED.h"],[/\bOneWire\b/,"OneWire.h"],[/\bDallasTemperature\b/,"DallasTemperature.h"],[/\bKniwwelino\./,"Kniwwelino.h"]];
+  for(const [re,inc] of LIBS) if(re.test(ns)&&!new RegExp("#include\\s*[<\"]"+inc.replace(/\./g,"\\.")).test(code)) iss.push("uses "+inc.replace(".h","")+" but has no #include <"+inc+">");
+  if(/\bWiFi\.\w/.test(ns)&&!/#include\s*[<"](WiFi\.h|ESP8266WiFi\.h|WiFiNINA\.h|WiFiS3\.h)/.test(code)) iss.push("uses WiFi but has no #include <WiFi.h> (ESP32) / <ESP8266WiFi.h> (ESP8266)");
+  if(/\bSerial\.(print|println|write|read|available|printf)\b/.test(ns)&&!/\bSerial\.begin\s*\(/.test(ns)) iss.push("uses Serial but never calls Serial.begin()");
+  for(const v of new Set([...ns.matchAll(/\b([A-Za-z_]\w*)\s*=\s*millis\s*\(\s*\)/g)].map(x=>x[1]))){
+    const d=ns.match(new RegExp("\\b(unsigned\\s+long|uint32_t|unsigned\\s+int|int|long|float|double|word|uint16_t|int16_t|short)\\s+(?:[\\w\\s,=]*?,\\s*)?"+v+"\\b"));
+    if(d&&!/unsigned\s+long|uint32_t/.test(d[1])) iss.push("'"+v+"' stores millis() but is declared as '"+d[1].replace(/\s+/g," ")+"' — use unsigned long");
+  }
+  const pins={};
+  for(const m of ns.matchAll(/(?:#define\s+([A-Za-z_]\w*)\s+(A?\d+)\b)|(?:\b(?:int|byte|uint8_t|short|unsigned\s+int|int8_t|uint16_t)\s+([A-Za-z_]\w*)\s*=\s*(A?\d+)\s*[;,])/g)) pins[m[1]||m[3]]=m[2]||m[4];
+  const resolve=x=>{ x=x.trim(); if(/^A?\d+$/.test(x)) return x; return pins[x]||null; };
+  const outPins=new Set([...ns.matchAll(/\bpinMode\s*\(\s*([^,]+?)\s*,\s*OUTPUT\s*\)/g)].map(m=>resolve(m[1])||m[1].trim()));
+  const pinModeAny=new Set([...ns.matchAll(/\bpinMode\s*\(\s*([^,]+?)\s*,/g)].map(m=>resolve(m[1])||m[1].trim()));
+  for(const m of ns.matchAll(/\bdigitalWrite\s*\(\s*([^,()]+?)\s*,/g)){ const raw=m[1].trim(), p=resolve(raw)||raw; if(!/^[A-Za-z_]\w*$|^A?\d+$/.test(raw)) continue; if(!outPins.has(p)&&!pinModeAny.has(p)) { iss.push("digitalWrite("+raw+", …) but no pinMode("+raw+", OUTPUT) in setup()"); break; } }
+  const b=board||"", avr=["uno","nano",""].includes(b)&&!/ESP32|ESP8266|WiFi\.h/.test(code);
+  if(avr||b==="mega"){ const PWM=b==="mega"?[2,3,4,5,6,7,8,9,10,11,12,13,44,45,46]:[3,5,6,9,10,11];
+    for(const m of ns.matchAll(/\banalogWrite\s*\(\s*([^,]+?)\s*,/g)){ const p=resolve(m[1]); if(p&&(/^A/.test(p)||!PWM.includes(+p))){ iss.push("analogWrite on pin "+m[1].trim()+(p!==m[1].trim()?" ("+p+")":"")+" — not a PWM pin on "+(b==="mega"?"Mega":"Uno/Nano")+" (PWM: "+PWM.join(", ")+")"); break; } } }
+  if(b==="esp32"||/ESP32|<WiFi\.h>/.test(code)){
+    for(const m of ns.matchAll(/\bpinMode\s*\(\s*([^,]+?)\s*,\s*OUTPUT/g)){ const p=+resolve(m[1]); if(p>=34&&p<=39) iss.push("GPIO "+p+" is input-only on ESP32 — it can't be an OUTPUT"); if(p>=6&&p<=11) iss.push("GPIO "+p+" is used by the ESP32 flash — pick another pin"); } }
+  return [...new Set(iss)].slice(0,8);
+}
+// ---------- автопроверка: Python в отдельном потоке (Web Worker), с таймаутом ----------
+const PY_WORKER_SRC=`let py=null;
+self.onmessage=async e=>{ const d=e.data;
+  try{
+    if(!py){ importScripts(d.base+"pyodide.js"); py=await loadPyodide({indexURL:d.base}); }
+    let out=""; py.setStdout({batched:s=>{ out+=s+"\\n"; }}); py.setStderr({batched:s=>{ out+=s+"\\n"; }});
+    py.setStdin({stdin:()=>null});
+    py.globals.set("__qsrc__", d.code);
+    py.runPython("compile(__qsrc__, 'main.py', 'exec')");
+    if(d.run){ try{ await py.loadPackagesFromImports(d.code); }catch(_){} await py.runPythonAsync(d.code); }
+    self.postMessage({ok:true,out:out.slice(-1500)});
+  }catch(err){ self.postMessage({ok:false,err:String((err&&err.message)||err)}); }
+};`;
+let pyWorker=null;
+function testPython(code){
+  return new Promise(res=>{
+    if(!window.Worker){ res({skipped:"no workers"}); return; }
+    if(!pyWorker){ try{ pyWorker=new Worker(URL.createObjectURL(new Blob([PY_WORKER_SRC],{type:"text/javascript"}))); }catch(e){ res({skipped:"worker blocked"}); return; } }
+    const w=pyWorker;
+    const noRun=PY_HW.test(code)||/\b(open\s*\(|requests|urllib|socket|http\.server|threading|multiprocessing|subprocess|sys\.argv|argparse)\b/.test(code);
+    const firstLoad=!w._ready;
+    const tm=setTimeout(()=>{ w.terminate(); if(pyWorker===w) pyWorker=null; res(firstLoad?{skipped:"Python didn't load in time"}:{timeout:true}); }, firstLoad?60000:8000);
+    w.onmessage=e=>{ clearTimeout(tm); w._ready=true; res(e.data); };
+    w.onerror=e=>{ clearTimeout(tm); w.terminate(); if(pyWorker===w) pyWorker=null; res({skipped:"worker error"}); };
+    w.postMessage({code, base:PYODIDE, run:!noRun});
+  });
+}
+function pyIssues(r){
+  if(!r||r.ok||r.skipped||r.timeout) return [];
+  const msg=String(r.err||"");
+  if(/\bEOFError\b|KeyboardInterrupt|SystemExit/.test(msg)) return [];   // программа просто ждёт ввода — это нормально
+  if(/importScripts|NetworkError|Failed to fetch|loadPyodide/.test(msg)) return [];
+  const lines=msg.trim().split("\n").filter(Boolean);
+  const where=(lines.filter(l=>/File "(main\.py|<exec>)", line \d+/.test(l)).pop()||"").match(/line (\d+)/);
+  return [(where?"line "+where[1]+": ":"")+(lines.pop()||msg).slice(0,240)];
+}
+// ---------- автопроверка: JS, CSS, JSON ----------
+function jsIssues(code){
+  if(/^\s*(import|export)\s/m.test(code)) return [];
+  try{ new Function(code); return []; }catch(e){ return ["JavaScript syntax error: "+String(e.message).slice(0,200)]; }
+}
+function cssIssues(code){
+  const iss=[], ns=code.replace(/\/\*[\s\S]*?\*\//g,"").replace(/"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'/g,'""');
+  const d=ns.split("{").length-ns.split("}").length;
+  if(d) iss.push("unbalanced { } in CSS ("+(d>0?"missing }":"extra }")+")");
+  try{
+    const sh=new CSSStyleSheet(); sh.replaceSync(ns.replace(/@import[^;]+;/g,""));
+    let depth=0, top=0; for(const ch of ns){ if(ch==="{"){ if(depth===0) top++; depth++; } else if(ch==="}") depth=Math.max(0,depth-1); }
+    if(top&&sh.cssRules.length<top) iss.push((top-sh.cssRules.length)+" CSS rule(s) are invalid and get ignored by the browser (check selectors and @-rules)");
+  }catch(e){}
+  return iss;
+}
+function jsonIssues(code){ try{ JSON.parse(code); return []; }catch(e){ return ["not valid JSON: "+String(e.message).slice(0,160)]; } }
+// какой проверкой проверять файл
+function checkKind(c){
+  const ext=(c.name.split(".").pop()||"").toLowerCase();
+  if(canPreview(c)) return "html";
+  if(["ino","cpp","c","h","hpp"].includes(ext)||c.lang==="arduino"||c.lang==="cpp") return "arduino";
+  if(ext==="py"||c.lang==="python"||c.lang==="micropython") return "python";
+  if(ext==="js"||c.lang==="javascript"||c.lang==="js") return "js";
+  if(ext==="css"||c.lang==="css") return "css";
+  if(ext==="json"||c.lang==="json") return "json";
+  return null;
+}
+async function checkPart(c){
+  const k=checkKind(c);
+  if(k==="html") return await testHtml(c.code);
+  if(k==="arduino") return lintArduino(c.code, $("board").value);
+  if(k==="python") return pyIssues(await testPython(c.code));
+  if(k==="js") return jsIssues(c.code);
+  if(k==="css") return cssIssues(c.code);
+  if(k==="json") return jsonIssues(c.code);
+  return [];
+}
+// запуск страницы в невидимом окне: ловим ошибки JavaScript
+function testHtml(code){
+  return new Promise(res=>{
+    const fr=document.createElement("iframe");
+    fr.setAttribute("sandbox","allow-scripts");
+    fr.style.cssText="position:fixed;left:0;top:0;width:900px;height:640px;opacity:0.01;pointer-events:none;z-index:-1;border:0";
+    const errs=[];
+    const onMsg=e=>{ if(e.source===fr.contentWindow&&e.data&&e.data.jvErr) errs.push(String(e.data.jvErr).slice(0,200)); };
+    window.addEventListener("message",onMsg);
+    const POKE="<script>setTimeout(function(){try{var c=document.elementFromPoint(450,320)||document.body;c.click();"+
+      "[' ','ArrowRight','ArrowUp','ArrowLeft','Enter','a','w'].forEach(function(k){var o={key:k,code:k===' '?'Space':k,bubbles:true};document.dispatchEvent(new KeyboardEvent('keydown',o));window.dispatchEvent(new KeyboardEvent('keydown',o));document.dispatchEvent(new KeyboardEvent('keyup',o));});"+
+      "Array.prototype.slice.call(document.querySelectorAll('button')).slice(0,4).forEach(function(b){try{b.click()}catch(e){}});"+
+      "var cv=document.querySelector('canvas');if(cv){['pointerdown','mousedown','touchstart','click'].forEach(function(t){try{cv.dispatchEvent(new Event(t,{bubbles:true}))}catch(e){}});}"+
+      "}catch(e){}},700);"+
+      "setTimeout(function(){try{var b=document.body;var vis=b&&(b.innerText.trim().length>1||document.querySelector('canvas,svg,img,video,input,button'));if(!vis)parent.postMessage({jvErr:'the page looks blank — nothing visible after loading'},'*');}catch(e){}},2400);<\/script>";
+    const PHONE="<script>setTimeout(function(){try{var w=document.documentElement.scrollWidth;if(w>window.innerWidth+4)parent.postMessage({jvErr:'at phone width (390px) the page is '+w+'px wide and scrolls sideways — make the layout responsive'},'*');}catch(e){}},1500);<\/script>";
+    const ph=document.createElement("iframe");
+    ph.setAttribute("sandbox","allow-scripts");
+    ph.style.cssText="position:fixed;left:0;top:0;width:390px;height:740px;opacity:0.01;pointer-events:none;z-index:-1;border:0";
+    const onPh=e=>{ if(e.source===ph.contentWindow&&e.data&&e.data.jvErr&&/phone width/.test(e.data.jvErr)) errs.push(String(e.data.jvErr).slice(0,200)); };
+    window.addEventListener("message",onPh);
+    fr.srcdoc=withCatcher(code)+POKE; ph.srcdoc=code+PHONE;
+    document.body.append(fr,ph);
+    setTimeout(()=>{ window.removeEventListener("message",onMsg); window.removeEventListener("message",onPh); fr.remove(); ph.remove(); res([...new Set(errs)].slice(0,6)); },3200);
+  });
+}
 // ---------- индикатор: что работает, а что нет ----------
 let TRACE=null;
 function health(id,state,title){ const e=$(id); if(!e) return; e.className=state; if(title) e.title=title; }
@@ -1236,28 +1253,10 @@ function step(label,box){
            done(d){ s.className="ok"; s.textContent="✓ "+label+" "+(d||sec()); },
            fail(d){ s.className="err"; s.textContent="✗ "+label+" "+(d||""); } };
 }
-// Если явно просили картинку, а блока ```image нет — сами составляем описание и рисуем
-const WANT_IMG=/(нарису|сгенерир|создай (мне )?(картин|изображ|рисун|фото)|сделай (мне )?(картин|изображ|рисун)|картинк|draw|generate (an? )?(image|picture)|create (an? )?(image|picture)|make (an? )?(image|picture)|image of|picture of|dessine|crée une image|génère une image|disegna|crea un'?immagine|genera un'?immagine|zeichne|erstelle ein bild|generiere ein bild)/i;
-function hasPic(text){ return splitAnswer(text).some(p=>p.type==="image"||p.type==="photo"); }
-async function forceImage(key, signal, question){
-  const ask=[{role:"user",parts:[{text:"Write ONE English prompt (25–60 words) for an AI image generator for this request: \""+question+"\". "+
-    "One clear subject, exact art style, setting, lighting, colours, camera angle, end with 'no text'. If it shows a real, identifiable person, use a clearly illustrated style (cartoon, caricature, comic or painting), not photorealistic. Reply with ONLY the prompt."}]}];
-  const j=await generate(key, signal, null, ask, [false]);
-  const cand=(j.candidates||[])[0]||{};
-  let pr=((cand.content&&cand.content.parts)||[]).filter(p=>p.text&&!p.thought).map(p=>p.text).join(" ").trim().replace(/^```\w*|```$/g,"").replace(/\s+/g," ").replace(/^["']|["']$/g,"");
-  if(pr.length<15||/(I can'?t|I cannot|I'm unable|не могу|je ne peux|non posso|ich kann nicht)/i.test(pr)) return null;
-  return pr;
-}
-// Запасной вариант без Gemini: берём сам запрос
-function localPrompt(q){
-  const s=q.replace(/^(please\s+)?(create|make|generate|draw|show me)\s+(me\s+)?(an?\s+)?(image|picture|drawing|photo)?\s*(of\s+)?/i,"")
-           .replace(/^(нарисуй|сгенерируй|создай|сделай)\s+(мне\s+)?(картинку|изображение|рисунок)?\s*/i,"");
-  return s.trim()+", colorful cartoon illustration, clean composition, soft lighting, no text";
-}
 function streamPreview(s){
   s=s.replace(/```(wiki|place)[^`]*?(```|$)/g,"");
-  return s.replace(/```(\w*)[ \t]*([^\n]*)\n[\s\S]*?```/g,(m,l,n)=> l==="image"?"[🎨 picture]":l==="photo"?"[🖼 photos]":"[📄 "+(n||l||"code")+"]")
-          .replace(/```(\w*)[ \t]*([^\n]*)\n?([\s\S]*)$/,(m,l,n,b)=> (l==="image"||l==="photo")?"…":"[⏳ "+t("writing")+" "+(n||l||"code")+" · "+b.split("\n").length+" "+t("lines")+"…]");
+  return s.replace(/```(\w*)[ \t]*([^\n]*)\n[\s\S]*?```/g,(m,l,n)=> l==="image"?"[🎨 picture]":l==="photo"?"[🖼 photos]":l==="mermaid"?"[📊 diagram]":"[📄 "+(n||l||"code")+"]")
+          .replace(/```(\w*)[ \t]*([^\n]*)\n?([\s\S]*)$/,(m,l,n,b)=> (l==="image"||l==="photo"||l==="mermaid")?"…":"[⏳ "+t("writing")+" "+(n||l||"code")+" · "+b.split("\n").length+" "+t("lines")+"…]");
 }
 // «Кто такой Эйнштейн?» → ищем карточку в Википедии, даже если модель её не добавила
 function whoIs(q){
@@ -1265,9 +1264,9 @@ function whoIs(q){
   if(!m) return null; const s=m[1].trim(); if(s.split(/\s+/).length>6) return null; return s;
 }
 function hasCode(text){ return splitAnswer(text).some(p=>p.type==="code"); }
-async function reviewCode(key, signal, answer){
-  const contents=[...apiTurns(), {role:"model",parts:[{text:answer}]}, {role:"user",parts:[{text:REVIEW}]}];
-  const j=await generate(key, signal, null, contents, [false]);
+async function reviewCode(key, signal, answer, instr, brain){
+  const contents=[...apiTurns(), {role:"model",parts:[{text:answer}]}, {role:"user",parts:[{text:instr||REVIEW}]}];
+  const j=await generateWith(brain||"gemini", key, signal, null, contents, [false]);
   const cand=(j.candidates||[])[0]||{};
   const better=((cand.content&&cand.content.parts)||[]).filter(p=>p.text&&!p.thought).map(p=>p.text).join("").trim();
   const finished=cand.finishReason!=="MAX_TOKENS";
@@ -1353,7 +1352,8 @@ async function ask(question){
   let answer="", streamed="";
   const bodyEl=out.querySelector(".body");
   try{
-    const j=await generate(key, ctl.signal, out, undefined, undefined, txt=>{
+    var brain=pickBrain(question, files);
+    const j=await generateWith(brain, key, ctl.signal, out, undefined, undefined, txt=>{
       if(reqCtl!==ctl) return;
       streamed=txt; bodyEl.textContent=streamPreview(txt);
       const nearBottom=log.scrollHeight-log.scrollTop-log.clientHeight<120; if(nearBottom) log.scrollTop=log.scrollHeight;
@@ -1362,26 +1362,39 @@ async function ask(question){
     const cand=(j.candidates||[])[0]||{};
     answer=((cand.content&&cand.content.parts)||[]).filter(p=>p.text&&!p.thought).map(p=>p.text).join("").trim();
     if(!answer) throw new Error("EMPTY");
-    if(WANT_IMG.test(question)&&!hasPic(answer)){
-      const st=step("image prompt"); let pr=null;
-      try{ pr=await forceImage(key, ctl.signal, question); }
-      catch(e){ if(reqCtl!==ctl) throw e; }
-      if(pr) st.done(); else { st.fail("→ fallback"); pr=localPrompt(question); }
-      answer=answer+"\n\n```image size=square\n"+pr+"\n```";
-    }
     if(gpsPhotos.length&&!/```place/.test(answer)){ const g=gpsPhotos[0]; answer+="\n\n```place\n"+g.lat+", "+g.lon+" | "+(g.addr?g.addr.split(",").slice(0,3).join(","):g.name)+" | high | photo GPS\n```"; }
     if(!/```wiki/.test(answer)){ const wt=whoIs(question); if(wt) answer="```wiki\n"+wt+"\n```\n"+answer; }
     answer=addSeeds(answer);
     renderAnswer(out.querySelector(".body"), answer, true, question);
-    if(hasCode(answer)&&!teach){
+    if(hasCode(answer)&&!teach&&brain==="gemini"){
       // показываем первую версию, а пока Qwentity проверяет и улучшает код
       setStatus("improving");
       const note=document.createElement("span"); note.className="src"; note.textContent=t("improving"); out.append(note);
       try{
-        const better=await reviewCode(key, ctl.signal, answer);
+        const better=await reviewCode(key, ctl.signal, answer, REVIEW, brain);
         if(better){ answer=addSeeds(better); renderAnswer(out.querySelector(".body"), answer, true, question); note.textContent=t("improved"); }
         else note.remove();
       }catch(e){ if(reqCtl!==ctl) throw e; note.remove(); }
+    }
+    // автотест: запускаем HTML незаметно, нажимаем кнопки и клавиши, ловим ошибки и сами чиним (до 2 раз)
+    if(!teach){
+      for(let round=1; round<=2; round++){
+        const files=splitAnswer(answer).filter(x=>x.type==="code"&&checkKind(x));
+        if(!files.length) break;
+        setStatus("testing");
+        const kinds=[...new Set(files.map(checkKind))].join("+");
+        const st=step(t("autoTest")+" · "+kinds+(round>1?" #"+round:""));
+        if(files.some(f=>checkKind(f)==="python")&&!(pyWorker&&pyWorker._ready)) st.info("loading Python ~10 s");
+        const errs=[];
+        for(const c of files){ if(reqCtl!==ctl) break; const e=await checkPart(c); if(e.length) errs.push(c.name+": "+e.join(" | ")); }
+        if(!errs.length){ st.done("✓"); break; }
+        st.fail(errs.length+" file"+(errs.length>1?"s":"")+" with problems → fixing");
+        const det=document.createElement("span"); det.className="err"; det.textContent="  ↳ "+errs.join(" ‖ ").slice(0,300); (TRACE||out).append(det);
+        let fixed=null;
+        try{ fixed=await reviewCode(key, ctl.signal, answer, FIX_INSTR(errs), brain); }catch(e){ if(reqCtl!==ctl) throw e; }
+        if(!fixed) break;
+        answer=addSeeds(fixed); renderAnswer(out.querySelector(".body"), answer, true, question);
+      }
     }
     const chunks=(cand.groundingMetadata&&cand.groundingMetadata.groundingChunks)||[];
     if(chunks.length){
